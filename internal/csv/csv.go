@@ -38,6 +38,9 @@ func Parse[T any](r io.Reader, row *T) ([]T, error) {
 
 		outputStruct := new(T)
 		for i, f := range headerMap {
+			if f == nil {
+				continue
+			}
 			structValue := reflect.ValueOf(outputStruct).Elem().FieldByName(f.Name)
 			if !structValue.CanSet() {
 				log.Warn("cannot set unexported field " + structValue.Type().Name())

@@ -29,9 +29,9 @@ func TestParse(t *testing.T) {
 		AFloat float32 `csv:"Float"`
 		AString string `csv:"String"`
 	}
-	inputStr := `String,Float,Int
-string,1.01,3
-stringtwo,1.02,4
+	inputStr := `String,Float,Int,Ignore
+string,1.01,3,ignore
+stringtwo,1.02,4,ignore
 `
 
 	outputArr, err := Parse(strings.NewReader(inputStr), &testStruct{})
