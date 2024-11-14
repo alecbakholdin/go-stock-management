@@ -3,9 +3,10 @@ package root
 import (
 	"github.com/golang-jwt/jwt/v5"
 	"stock-management/internal/web/login"
+	"stock-management/internal/task"
 )
 
-templ Root() {
+templ Root(tasks []task.TaskStatus) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -17,7 +18,7 @@ templ Root() {
 		</head>
 		<body>
 			if _, ok := ctx.Value("user").(*jwt.Token); ok {
-				logged in
+				@task.Tasks(tasks)
 			} else {
 				@login.Login()
 			}

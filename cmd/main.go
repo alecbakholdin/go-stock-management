@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"os"
 	"stock-management/internal/models"
+	"stock-management/internal/task"
 	"stock-management/internal/web/login"
 	"stock-management/internal/web/root"
 
@@ -57,8 +58,11 @@ func main() {
 		},
 		ContinueOnIgnoredError: true,
 	}))
+	tasks := []task.TaskStatus{
 
-	e.GET("/", root.Handler)
+	}
+
+	e.GET("/", root.Handler(tasks))
 	e.POST("/login", login.Handler(ec.SigningSecret, ec.AdminUsername, ec.AdminPassword))
 
 	e.Logger.Fatal(e.Start(cmp.Or(os.Getenv("PORT"), ":1323")))

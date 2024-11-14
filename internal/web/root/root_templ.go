@@ -10,10 +10,11 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/golang-jwt/jwt/v5"
+	"stock-management/internal/task"
 	"stock-management/internal/web/login"
 )
 
-func Root() templ.Component {
+func Root(tasks []task.TaskStatus) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -34,7 +35,7 @@ func Root() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Stock Management</title>")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 1)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -46,12 +47,12 @@ func Root() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</head><body>")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 2)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if _, ok := ctx.Value("user").(*jwt.Token); ok {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("logged in")
+			templ_7745c5c3_Err = task.Tasks(tasks).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -61,7 +62,7 @@ func Root() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</body></html>")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 3)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -90,7 +91,7 @@ func scriptInits() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<style>\n      :root {\n        font-family: Inter, sans-serif;\n        font-feature-settings: \"liga\" 1, \"calt\" 1; /* fix for Chrome */\n      }\n      @supports (font-variation-settings: normal) {\n        :root {\n          font-family: InterVariable, sans-serif;\n        }\n      }\n    </style><script>\n      const htmlElement = document.documentElement;\n\n      if (\n        localStorage.getItem(\"mode\") === \"dark\" ||\n        (!(\"mode\" in localStorage) &&\n          window.matchMedia(\"(prefers-color-scheme: dark)\").matches)\n      ) {\n        htmlElement.classList.add(\"dark\");\n      } else {\n        htmlElement.classList.remove(\"dark\");\n      }\n\n      htmlElement.classList.add(\n        localStorage.getItem(\"theme\") || \"uk-theme-zinc\"\n      );\n    </script>")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 4)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -119,7 +120,7 @@ func cdnLinks() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<link rel=\"stylesheet\" href=\"https://unpkg.com/franken-ui@1.1.0/dist/css/core.min.css\"><script src=\"https://unpkg.com/franken-ui@1.1.0/dist/js/core.iife.js\" type=\"module\"></script><script src=\"https://unpkg.com/franken-ui@1.1.0/dist/js/icon.iife.js\" type=\"module\"></script><script src=\"https://cdn.tailwindcss.com\"></script><script src=\"https://unpkg.com/htmx.org@2.0.3\"></script>")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 5)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
