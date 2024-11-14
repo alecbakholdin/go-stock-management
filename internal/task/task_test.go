@@ -24,12 +24,12 @@ func TestExecuteTask(t *testing.T) {
 	testExecutor := &testEx{fetch: []inputType{{fieldOne: "one", fieldTwo: "two"}}}
 	task := New(echo.New(), "title", testExecutor)
 	task.Execute()
-	assert.ElementsMatch(t, []modelType{{fieldOne: "one", fieldTwo: "two"}}, testExecutor.written)
+	assert.ElementsMatch(t, []inputType{{fieldOne: "one", fieldTwo: "two"}}, testExecutor.written)
 }
 
 type testEx struct {
 	fetch   []inputType
-	written []modelType
+	written []inputType
 }
 
 type inputType struct {
@@ -37,23 +37,11 @@ type inputType struct {
 	fieldTwo string
 }
 
-type modelType struct {
-	fieldTwo string
-	fieldOne string
-}
-
 func (t *testEx) Fetch() ([]inputType, error) {
 	return t.fetch, nil
 }
 
-func (t *testEx) Map(i inputType) (modelType) {
-	return modelType{
-		fieldOne: i.fieldOne,
-		fieldTwo: i.fieldTwo,
-	}
-}
-
-func (t *testEx) Save(i []modelType) error {
+func (t *testEx) Save(i []inputType) error {
 	t.written = i
 	return nil
 }

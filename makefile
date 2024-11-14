@@ -46,5 +46,7 @@ run: export MYSQL_CONNECTION_STRING = $(MYSQL)
 run: export SIGNING_SECRET = supersecret
 run: export ADMIN_USERNAME = admin
 run: export ADMIN_PASSWORD = trust
+run: export ZACKS_URL = https://www.zacks.com/portfolios/tools/ajxExportExel.php
+run: export ZACKS_DAILY_FORM_VALUE = 2282242_update_zYjM1ADO0kjN
 run: build mysql
 	./tmp/stock-management

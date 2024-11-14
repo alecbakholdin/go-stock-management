@@ -6,9 +6,25 @@ package models
 
 import (
 	"database/sql"
+	"time"
 )
 
 type Company struct {
 	Symbol sql.NullString
 	Name   sql.NullString
+}
+
+type ZacksDaily struct {
+	Created       time.Time
+	Symbol        string
+	Company       sql.NullString
+	Price         float64
+	DollarChange  float64
+	PercentChange float64
+	IndustryRank  sql.NullInt32
+	ZacksRank     sql.NullInt32
+	ValueScore    sql.NullString
+	GrowthScore   sql.NullString
+	MomentumScore sql.NullString
+	VgmScore      sql.NullString
 }

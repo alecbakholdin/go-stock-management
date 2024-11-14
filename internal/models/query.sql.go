@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 )
 
 const listCompanies = `-- name: ListCompanies :many
@@ -35,4 +36,35 @@ func (q *Queries) ListCompanies(ctx context.Context) ([]Company, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const saveZacksDaily = `-- name: SaveZacksDaily :copyfrom
+INSERT INTO zacks_daily (
+        symbol,
+        company,
+        price,
+        dollar_change,
+        percent_change,
+        industry_rank,
+        zacks_rank,
+        value_score,
+        growth_score,
+        momentum_score,
+        vgm_score
+    )
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`
+
+type SaveZacksDailyParams struct {
+	Symbol        string
+	Company       sql.NullString
+	Price         float64
+	DollarChange  float64
+	PercentChange float64
+	IndustryRank  sql.NullInt32
+	ZacksRank     sql.NullInt32
+	ValueScore    sql.NullString
+	GrowthScore   sql.NullString
+	MomentumScore sql.NullString
+	VgmScore      sql.NullString
 }

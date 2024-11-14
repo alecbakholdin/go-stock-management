@@ -7,33 +7,32 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Executor[T1, T2 any] interface {
-	Fetch() ([]T1, error)
-	Map(t1 T1) (T2)
-	Save([]T2) error
+type Executor[T any] interface {
+	Fetch() ([]T, error)
+	Save([]T) error
 }
 
 type Task interface {
 }
 
-type TaskExecutor[T1, T2 any] struct {
+type TaskExecutor[T any] struct {
 	e          *echo.Echo
 	title      string
 	status     string
 	Progress   int
 	inProgress bool
-	ex         Executor[T1, T2]
+	ex         Executor[T]
 }
 
-func New[T1, T2 any](e *echo.Echo, title string, ex Executor[T1, T2]) *TaskExecutor[T1, T2] {
-	return &TaskExecutor[T1, T2]{
+func New[T any](e *echo.Echo, title string, ex Executor[T]) *TaskExecutor[T] {
+	return &TaskExecutor[T]{
 		e:     e,
 		title: title,
 		ex:    ex,
 	}
 }
 
-func (t *TaskExecutor[T1, T2]) Execute() {
+func (t *TaskExecutor[T]) Execute() {
 	defer t.ResetDelay()
 	t.inProgress = true
 	t.status = "Fetching data"
@@ -44,14 +43,8 @@ func (t *TaskExecutor[T1, T2]) Execute() {
 		return
 	}
 
-	t.status = "Mapping rows"
-	output := make([]T2, len(data))
-	for i, row := range data {
-		output[i] = t.ex.Map(row)
-	}
-
 	t.status = "Saving rows to DB"
-	if err := t.ex.Save(output); err != nil {
+	if err := t.ex.Save(data); err != nil {
 		t.Error("Error saving to DB for " + t.title + ": " + err.Error())
 		t.status = "Error saving to DB"
 		return
@@ -60,40 +53,40 @@ func (t *TaskExecutor[T1, T2]) Execute() {
 	t.inProgress = false
 }
 
-func (t *TaskExecutor[T1, T2]) Info(i ...interface{}) {
+func (t *TaskExecutor[T]) Info(i ...interface{}) {
 	t.e.Logger.Info(i...)
 }
 
-func (t *TaskExecutor[T1, T2]) Error(i ...interface{}) {
+func (t *TaskExecutor[T]) Error(i ...interface{}) {
 	t.e.Logger.Error(i...)
 }
 
-func (t *TaskExecutor[T1, T2]) Title() string {
+func (t *TaskExecutor[T]) Title() string {
 	return t.title
 }
 
-func (t *TaskExecutor[T1, T2]) InProgress() bool {
+func (t *TaskExecutor[T]) InProgress() bool {
 	return t.inProgress
 }
 
-func (t *TaskExecutor[T1, T2]) Status() string {
+func (t *TaskExecutor[T]) Status() string {
 	return t.status
 }
 
-func (t *TaskExecutor[T1, T2]) ResetDelay() {
+func (t *TaskExecutor[T]) ResetDelay() {
 	go func() {
 		time.Sleep(time.Second * 2)
 		t.Reset()
 	}()
 }
 
-func (t *TaskExecutor[T1, T2]) Reset() {
+func (t *TaskExecutor[T]) Reset() {
 	t.inProgress = false
 	t.Progress = 0
 	t.status = ""
 	t.inProgress = false
 }
 
-func (t *TaskExecutor[T1, T2]) Render(c echo.Context) error {
+func (t *TaskExecutor[T]) Render(c echo.Context) error {
 	return web.RenderOk(c, TaskRow(t))
 }

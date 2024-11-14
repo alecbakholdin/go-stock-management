@@ -6,4 +6,6 @@ sql:
     gen:
       go:
         package: "models"
+        sql_package: "database/sql"
+        sql_driver: "github.com/go-sql-driver/mysql"
         out: "../internal/models"

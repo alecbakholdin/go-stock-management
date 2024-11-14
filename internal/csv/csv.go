@@ -49,6 +49,14 @@ func Parse[T any](r io.Reader, row *T) ([]T, error) {
 			switch structValue.Kind() {
 			case reflect.String:
 				structValue.SetString(line[i])
+			case reflect.Int8:
+				fallthrough
+			case reflect.Int16:
+				fallthrough
+			case reflect.Int32:
+				fallthrough
+			case reflect.Int64:
+				fallthrough
 			case reflect.Int:
 				if intVal, err := strconv.Atoi(line[i]); err != nil {
 					log.Warn("Invalid int value ", line[i], " on line ", i)
