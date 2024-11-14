@@ -1,0 +1,21 @@
+services:
+  app:
+    container_name: go-stock-management
+    build: 
+      context: .
+      dockerfile: ./dev.Dockerfile
+    ports:
+      - "1323:1323"
+    environment:
+      - SECRET=secretstring
+      - MYSQL_CONNECTION_STRING=root:password@mysql/stock_ratings
+  mysql:
+    container_name: go-stock-management-mysql
+    image: mysql:latest
+    volumes:
+      - mysqldata:/var/lib/mysql
+    ports:
+      - "3306:3306"
+volumes:
+  mysqldata:
+    driver: local
