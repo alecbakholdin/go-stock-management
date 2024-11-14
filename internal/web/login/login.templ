@@ -1,0 +1,23 @@
+package login
+
+templ Login() {
+	<div class="w-full h-full mt-16 flex items-center justify-center">
+		<div class="space-y-2">
+			<span class="text-lg font-semibold w-full text-center">Login</span>
+			<form hx-post="/login" class="space-y-2" hx-disabled-elt="login-submit">
+				@LoginForm("", "", nil)
+			</form>
+		</div>
+	</div>
+}
+
+templ LoginForm(username, password string, err error) {
+	<input type="text" class="uk-input" name="username" placeholder="Username" autocomplete="username" value={ username }/>
+	<input type="password" class="uk-input" name="password" placeholder="Password" autocomplete="current-password" value={ password }/>
+	<button id="login-submit" class="uk-button uk-button-primary w-full">
+		Login
+	</button>
+	if err != nil {
+		<div class="uk-form-help uk-text-danger">{ err.Error() }</div>
+	}
+}
