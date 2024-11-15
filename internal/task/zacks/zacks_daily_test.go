@@ -21,14 +21,14 @@ func TestZacksDaily(t *testing.T) {
 `))
 	}))
 
-	s := saver{}
+	s := zacksDailySaver{}
 	z := NewDaily(&s, server.URL, "test")
 	rows, err := z.Fetch()
 	if !assert.NoError(t, err) {
 		t.FailNow()
 	}
 
-	expectedFetch := []zacksCsvRow{
+	expectedFetch := []zacksDailyCSvRow{
 		{"AA", "Alcoa", 41.21, 0.62, 1.53, 227, 3, "C", "B", "A", "B"},
 		{"KNDI", "Kandi Technologies Group", 1.28, 0.03, 2.40, 56, 0, "NA", "NA", "NA", "NA"},
 	}
@@ -37,7 +37,7 @@ func TestZacksDaily(t *testing.T) {
 		t.FailNow()
 	}
 
-	expectedSave := []models.SaveZacksDailyParams{
+	expectedSave := []models.SaveZacksDailyRowParams{
 		{
 			Symbol:        "AA",
 			Company:       sql.NullString{String: "Alcoa", Valid: true},
@@ -68,11 +68,11 @@ func TestZacksDaily(t *testing.T) {
 	assert.ElementsMatch(t, expectedSave, s.savedRows)
 }
 
-type saver struct {
-	savedRows []models.SaveZacksDailyParams
+type zacksDailySaver struct {
+	savedRows []models.SaveZacksDailyRowParams
 }
 
-func (s *saver) SaveZacksDaily(ctx context.Context, arg []models.SaveZacksDailyParams) (int64, error) {
-	s.savedRows = arg
-	return int64(len(arg)), nil
+func (s *zacksDailySaver) SaveZacksDailyRow(ctx context.Context, arg models.SaveZacksDailyRowParams) (error) {
+	s.savedRows = append(s.savedRows, arg)
+	return nil
 }

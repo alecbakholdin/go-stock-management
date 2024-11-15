@@ -48,5 +48,6 @@ run: export ADMIN_USERNAME = admin
 run: export ADMIN_PASSWORD = trust
 run: export ZACKS_URL = https://www.zacks.com/portfolios/tools/ajxExportExel.php
 run: export ZACKS_DAILY_FORM_VALUE = 2282242_update_zYjM1ADO0kjN
+run: export ZACKS_GROWTH_FORM_VALUE = 2282242_growth_zYjM1ADO0kjN
 run: build mysql
 	./tmp/stock-management

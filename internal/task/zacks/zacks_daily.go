@@ -2,76 +2,45 @@ package zacks
 
 import (
 	"context"
-	"errors"
-	"net/http"
-	"net/url"
-	"stock-management/internal/csv"
 	"stock-management/internal/models"
-	"strconv"
-
-	"github.com/labstack/gommon/log"
 )
 
-type SaveZacksDaily interface {
-	SaveZacksDaily(ctx context.Context, arg []models.SaveZacksDailyParams) (int64, error)
+type SaveZacksDailyRow interface {
+	SaveZacksDailyRow(ctx context.Context, arg models.SaveZacksDailyRowParams) error
 }
 
 type dailyUpdate struct {
-	q       SaveZacksDaily
-	url     string
-	initTab string
+	q SaveZacksDailyRow
 }
 
-func NewDaily(q SaveZacksDaily, url, initTab string) *dailyUpdate {
-	return &dailyUpdate{
-		q:       q,
-		url:     url,
-		initTab: initTab,
+
+func NewDaily(q SaveZacksDailyRow, url, formValue string) *zacksExecutor[zacksDailyCSvRow] {
+	return &zacksExecutor[zacksDailyCSvRow]{
+		ms:        &dailyUpdate{q: q},
+		tableName: "Daily",
+		formValue: formValue,
+		url:       url,
 	}
 }
 
-func (d *dailyUpdate) Fetch() ([]zacksCsvRow, error) {
-	values := url.Values{}
-	values.Add(FormKey, d.initTab)
-	res, err := http.PostForm(d.url, values)
-	if err != nil {
-		return nil, errors.Join(errors.New("error making POST request"), err)
-	} else if res.StatusCode != http.StatusOK {
-		return nil, errors.New("Got status " + strconv.Itoa(res.StatusCode))
+func (d *dailyUpdate) save(csvRow zacksDailyCSvRow) error {
+	sqlRow:= models.SaveZacksDailyRowParams{
+		Symbol:        csvRow.Symbol,
+		Company:       models.NullStringIfMatch(csvRow.Company, "NA"),
+		Price:         csvRow.Price,
+		DollarChange:  csvRow.DollarChange,
+		PercentChange: csvRow.PercentChange,
+		IndustryRank:  models.NullInt32IfZero(csvRow.IndustryRank),
+		ZacksRank:     models.NullInt32IfZero(csvRow.ZacksRank),
+		ValueScore:    models.NullStringIfMatch(csvRow.ValueScore, "NA"),
+		GrowthScore:   models.NullStringIfMatch(csvRow.GrowthScore, "NA"),
+		MomentumScore: models.NullStringIfMatch(csvRow.MomentumScore, "NA"),
+		VgmScore:      models.NullStringIfMatch(csvRow.VGMScore, "NA"),
 	}
-
-	defer res.Body.Close()
-	return csv.Parse(res.Body, &zacksCsvRow{})
+	return d.q.SaveZacksDailyRow(context.Background(), sqlRow)
 }
 
-func (d *dailyUpdate) Save(rows []zacksCsvRow) error {
-	sqlRows := make([]models.SaveZacksDailyParams, len(rows))
-	for i, row := range rows {
-		sqlRows[i] = models.SaveZacksDailyParams{
-			Symbol:        row.Symbol,
-			Company:       models.NullStringIfMatch(row.Company, "NA"),
-			Price:         row.Price,
-			DollarChange:  row.DollarChange,
-			PercentChange: row.PercentChange,
-			IndustryRank:  models.NullInt32IfZero(row.IndustryRank),
-			ZacksRank:     models.NullInt32IfZero(row.ZacksRank),
-			ValueScore:    models.NullStringIfMatch(row.ValueScore, "NA"),
-			GrowthScore:   models.NullStringIfMatch(row.GrowthScore, "NA"),
-			MomentumScore: models.NullStringIfMatch(row.MomentumScore, "NA"),
-			VgmScore:      models.NullStringIfMatch(row.VGMScore, "NA"),
-		}
-	}
-	num, err := d.q.SaveZacksDaily(context.Background(), sqlRows)
-	if err != nil {
-		return err
-	} else {
-		log.Info("Saved ", num, " Zacks daily rows")
-	}
-
-	return nil
-}
-
-type zacksCsvRow struct {
+type zacksDailyCSvRow struct {
 	Symbol        string
 	Company       string
 	Price         float64
