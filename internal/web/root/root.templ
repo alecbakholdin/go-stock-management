@@ -16,7 +16,7 @@ templ Root(tasks []task.TaskStatus) {
 			@scriptInits()
 			@cdnLinks()
 		</head>
-		<body>
+		<body class="bg-background text-foreground">
 			if _, ok := ctx.Value("user").(*jwt.Token); ok {
 				@task.Tasks(tasks)
 			} else {

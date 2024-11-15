@@ -34,13 +34,13 @@ mysql-down:
 	docker rm -f go-stock-management-mysql
 
 goose-create:
-	goose -dir ./config/migrations -s mysql "root:password@/stock_ratings" create migration sql
+	goose -dir ./config/migrations -s mysql "$(MYSQL)" create migration sql
 
 goose-up:
-	goose -dir ./config/migrations -s mysql "root:password@/stock_ratings" up
+	goose -dir ./config/migrations -s mysql "$(MYSQL)" up
 
 goose-down:
-	goose -dir ./config/migrations -s mysql "root:password@/stock_ratings" down
+	goose -dir ./config/migrations -s mysql "$(MYSQL)" down
 
 run: export MYSQL_CONNECTION_STRING = $(MYSQL)
 run: export SIGNING_SECRET = supersecret
