@@ -12,21 +12,20 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-
 type SaveZacksDaily interface {
 	SaveZacksDaily(ctx context.Context, arg []models.SaveZacksDailyParams) (int64, error)
 }
 
 type dailyUpdate struct {
-	q SaveZacksDaily
-	url string
+	q       SaveZacksDaily
+	url     string
 	initTab string
 }
 
-func NewDailyUpdate(q SaveZacksDaily, url, initTab string) *dailyUpdate {
+func NewDaily(q SaveZacksDaily, url, initTab string) *dailyUpdate {
 	return &dailyUpdate{
-		q: q,
-		url: url,
+		q:       q,
+		url:     url,
 		initTab: initTab,
 	}
 }
@@ -49,24 +48,24 @@ func (d *dailyUpdate) Save(rows []zacksCsvRow) error {
 	sqlRows := make([]models.SaveZacksDailyParams, len(rows))
 	for i, row := range rows {
 		sqlRows[i] = models.SaveZacksDailyParams{
-			Symbol: row.Symbol,
-			Company: models.NullStringIfMatch(row.Company, "NA"),
-			Price: row.Price,
-			DollarChange: row.DollarChange,
+			Symbol:        row.Symbol,
+			Company:       models.NullStringIfMatch(row.Company, "NA"),
+			Price:         row.Price,
+			DollarChange:  row.DollarChange,
 			PercentChange: row.PercentChange,
-			IndustryRank: models.NullInt32IfZero(row.IndustryRank),
-			ZacksRank: models.NullInt32IfZero(row.ZacksRank),
-			ValueScore: models.NullStringIfMatch(row.ValueScore, "NA"),
-			GrowthScore: models.NullStringIfMatch(row.GrowthScore, "NA"),
+			IndustryRank:  models.NullInt32IfZero(row.IndustryRank),
+			ZacksRank:     models.NullInt32IfZero(row.ZacksRank),
+			ValueScore:    models.NullStringIfMatch(row.ValueScore, "NA"),
+			GrowthScore:   models.NullStringIfMatch(row.GrowthScore, "NA"),
 			MomentumScore: models.NullStringIfMatch(row.MomentumScore, "NA"),
-			VgmScore: models.NullStringIfMatch(row.VGMScore, "NA"),
+			VgmScore:      models.NullStringIfMatch(row.VGMScore, "NA"),
 		}
 	}
 	num, err := d.q.SaveZacksDaily(context.Background(), sqlRows)
 	if err != nil {
 		return err
 	} else {
-		log.Info("Saved ", num ," Zacks daily rows")
+		log.Info("Saved ", num, " Zacks daily rows")
 	}
 
 	return nil
@@ -78,8 +77,8 @@ type zacksCsvRow struct {
 	Price         float64
 	DollarChange  float64 `csv:"$Chg"`
 	PercentChange float64 `csv:"%Chg"`
-	IndustryRank  int32  `csv:"Industry Rank"`
-	ZacksRank     int32  `csv:"Zacks Rank"`
+	IndustryRank  int32   `csv:"Industry Rank"`
+	ZacksRank     int32   `csv:"Zacks Rank"`
 	ValueScore    string  `csv:"Value Score"`
 	GrowthScore   string  `csv:"Growth Score"`
 	MomentumScore string  `csv:"Momentum Score"`

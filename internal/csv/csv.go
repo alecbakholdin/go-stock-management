@@ -30,7 +30,7 @@ func Parse[T any](r io.Reader, row *T) ([]T, error) {
 	}
 
 	output := []T{}
-	for _, line := range lines {
+	for lineNum, line := range lines {
 		if len(line) != len(headerMap) {
 			log.Warn("line did not match expected length. Expected ", len(headerMap), " but found ", len(line), " ", line)
 			continue
@@ -59,9 +59,9 @@ func Parse[T any](r io.Reader, row *T) ([]T, error) {
 				fallthrough
 			case reflect.Int:
 				if intVal, err := strconv.Atoi(line[i]); err != nil {
-					log.Warn("Invalid int value ", line[i], " on line ", i)
+					log.Warn("Invalid int value ", line[i], " on line ", lineNum, " column ", i)
 				} else if structValue.OverflowInt(int64(intVal)) {
-					log.Warn("Int value overflow ", line[i], " on line ", i)
+					log.Warn("Int value overflow ", line[i], " on line ", lineNum, " column ", i)
 				} else {
 					structValue.SetInt(int64(intVal))
 				}
@@ -69,9 +69,9 @@ func Parse[T any](r io.Reader, row *T) ([]T, error) {
 				fallthrough
 			case reflect.Float64:
 				if floatVal, err := strconv.ParseFloat(line[i], 64); err != nil {
-					log.Warn("Invalid float value ", line[i], " on line ", i)
+					log.Warn("Invalid float value ", line[i], " on line ", lineNum, " column ", i)
 				} else if structValue.OverflowFloat(floatVal) {
-					log.Warn("Float value overflow ", line[i], " on line ", i)
+					log.Warn("Float value overflow ", line[i], " on line ", lineNum, " column ", i)
 				} else {
 					structValue.SetFloat(floatVal)
 				}

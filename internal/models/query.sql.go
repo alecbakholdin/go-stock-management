@@ -68,3 +68,51 @@ type SaveZacksDailyParams struct {
 	MomentumScore sql.NullString
 	VgmScore      sql.NullString
 }
+
+const saveZacksDailyRow = `-- name: SaveZacksDailyRow :exec
+INSERT INTO zacks_daily (
+        symbol,
+        company,
+        price,
+        dollar_change,
+        percent_change,
+        industry_rank,
+        zacks_rank,
+        value_score,
+        growth_score,
+        momentum_score,
+        vgm_score
+    )
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`
+
+type SaveZacksDailyRowParams struct {
+	Symbol        string
+	Company       sql.NullString
+	Price         float64
+	DollarChange  float64
+	PercentChange float64
+	IndustryRank  sql.NullInt32
+	ZacksRank     sql.NullInt32
+	ValueScore    sql.NullString
+	GrowthScore   sql.NullString
+	MomentumScore sql.NullString
+	VgmScore      sql.NullString
+}
+
+func (q *Queries) SaveZacksDailyRow(ctx context.Context, arg SaveZacksDailyRowParams) error {
+	_, err := q.db.ExecContext(ctx, saveZacksDailyRow,
+		arg.Symbol,
+		arg.Company,
+		arg.Price,
+		arg.DollarChange,
+		arg.PercentChange,
+		arg.IndustryRank,
+		arg.ZacksRank,
+		arg.ValueScore,
+		arg.GrowthScore,
+		arg.MomentumScore,
+		arg.VgmScore,
+	)
+	return err
+}

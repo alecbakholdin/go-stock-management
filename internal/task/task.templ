@@ -1,20 +1,52 @@
 package task
 
-
-templ Tasks(t []TaskStatus) {
-    <div class="max-w-[400px] space-y-2">
-        
-    </div>
+type TaskStatus interface {
+	Title() string
+	InProgress() bool
+	Status() string
+	UrlPath() string
 }
 
-type TaskStatus interface {
-    Title() string
-    InProgress() bool
-    Status() string
+templ Tasks(t []TaskStatus) {
+	<div class="max-w-[600px] space-y-4 mx-auto mt-12">
+		<div><span class="text-xl font-semibold text-center">Stock Management</span></div>
+        <hr/>
+		<div class="flex flex-col gap-2 w-full items-center">
+			for _, task := range t {
+				@TaskRow(task)
+			}
+		</div>
+	</div>
 }
 
 templ TaskRow(t TaskStatus) {
-    <div>
-
-    </div>
+	<div
+		class="task-row grid grid-cols-[auto_1fr] w-full gap-3"
+		hx-swap="outerHTML"
+		if t.InProgress() {
+			hx-get={ t.UrlPath() }
+			hx-trigger="every 1s"
+		}
+	>
+		<button
+			type="button"
+			class="w-[150px] uk-button uk-button-primary place-self-center"
+			if t.InProgress() {
+				disabled="true"
+			} else {
+				hx-post={ t.UrlPath() }
+				hx-target="closest .task-row"
+			}
+		>
+			if t.InProgress() {
+				<div uk-spinner></div>
+			} else {
+				Start Task
+			}
+		</button>
+		<div>
+			<div><span class="font-semibold">{ t.Title() }</span></div>
+			<div><span class="text-muted-foreground text-sm">{ t.Status() }</span></div>
+		</div>
+	</div>
 }

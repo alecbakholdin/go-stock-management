@@ -8,21 +8,19 @@ import (
 )
 
 func TestResetTask(t *testing.T) {
-	task := New(echo.New(), "title", &testEx{fetch: []inputType{}})
-	task.inProgress = true
-	task.Progress = 50
+	task := New(echo.New(), "title", "/testing", &testEx{fetch: []inputType{}})
+	task.inProgress.Store(true)
 	task.status = "status"
 	task.Reset()
 
 	assert.Equal(t, "title", task.title)
-	assert.Equal(t, "", task.status)
-	assert.Equal(t, 0, task.Progress)
-	assert.Equal(t, false, task.inProgress)
+	assert.Equal(t, "Idle", task.status)
+	assert.Equal(t, false, task.InProgress())
 }
 
 func TestExecuteTask(t *testing.T) {
 	testExecutor := &testEx{fetch: []inputType{{fieldOne: "one", fieldTwo: "two"}}}
-	task := New(echo.New(), "title", testExecutor)
+	task := New(echo.New(), "title", "/testing", testExecutor)
 	task.Execute()
 	assert.ElementsMatch(t, []inputType{{fieldOne: "one", fieldTwo: "two"}}, testExecutor.written)
 }

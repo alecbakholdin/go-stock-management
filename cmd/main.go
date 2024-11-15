@@ -7,6 +7,7 @@ import (
 	"os"
 	"stock-management/internal/models"
 	"stock-management/internal/task"
+	"stock-management/internal/task/zacks"
 	"stock-management/internal/web/login"
 	"stock-management/internal/web/root"
 
@@ -23,6 +24,9 @@ type EnvConfig struct {
 	AdminUsername         string `env:"ADMIN_USERNAME,required"`
 	AdminPassword         string `env:"ADMIN_PASSWORD,required"`
 	MySqlConnectionString string `env:"MYSQL_CONNECTION_STRING,required"`
+
+	ZacksUrl string `env:"ZACKS_URL,required"`
+	ZacksDailyFormValue string `env:"ZACKS_DAILY_FORM_VALUE,required"`
 }
 
 func main() {
@@ -35,8 +39,10 @@ func main() {
 	if err != nil {
 		panic("Error connecting to mysql " + err.Error())
 	}
-	models.New(db)
+	q := models.New(db)
 
+	log.SetHeader("${time_rfc3339} ${level}")
+	log.SetLevel(log.INFO)
 	e := echo.New()
 	e.Logger.SetLevel(log.INFO)
 	e.Logger.SetHeader("${time_rfc3339} [id=${id}] ${level}")
@@ -59,11 +65,24 @@ func main() {
 		ContinueOnIgnoredError: true,
 	}))
 	tasks := []task.TaskStatus{
-
+		task.New(e, "Zacks Daily", "/zacksdaily", zacks.NewDaily(q, ec.ZacksUrl, ec.ZacksDailyFormValue)),
 	}
 
 	e.GET("/", root.Handler(tasks))
 	e.POST("/login", login.Handler(ec.SigningSecret, ec.AdminUsername, ec.AdminPassword))
+	type TaskUrlGetPost interface {
+		UrlPath() string
+		GetHandler(c echo.Context) error
+		PostHandler(c echo.Context) error
+	}
+	for _, task := range tasks {
+		if handlers, ok := task.(TaskUrlGetPost); ok {
+			e.GET(handlers.UrlPath(), handlers.GetHandler)
+			e.POST(handlers.UrlPath(), handlers.PostHandler)
+		} else {
+			panic("task does not have handlers")
+		}
+	}
 
 	e.Logger.Fatal(e.Start(cmp.Or(os.Getenv("PORT"), ":1323")))
 }

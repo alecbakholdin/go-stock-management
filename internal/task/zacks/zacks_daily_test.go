@@ -22,7 +22,7 @@ func TestZacksDaily(t *testing.T) {
 	}))
 
 	s := saver{}
-	z := NewDailyUpdate(&s, server.URL, "test")
+	z := NewDaily(&s, server.URL, "test")
 	rows, err := z.Fetch()
 	if !assert.NoError(t, err) {
 		t.FailNow()
