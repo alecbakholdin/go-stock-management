@@ -85,3 +85,54 @@ func (q *Queries) SaveZacksDailyRow(ctx context.Context, arg SaveZacksDailyRowPa
 	)
 	return err
 }
+
+const saveZacksGrowthRow = `-- name: SaveZacksGrowthRow :exec
+INSERT INTO zacks_growth (
+        symbol,
+        company,
+        price,
+        growth_score,
+        year_over_year_q0_growth,
+        long_term_growth_percent,
+        last_financial_year_actual,
+        next_finanical_year_est,
+        this_financial_year_est,
+        q1_est,
+        earnings_expected_surprise_prediction,
+        next_report_date
+    )
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`
+
+type SaveZacksGrowthRowParams struct {
+	Symbol                             string
+	Company                            sql.NullString
+	Price                              float64
+	GrowthScore                        sql.NullString
+	YearOverYearQ0Growth               float64
+	LongTermGrowthPercent              float64
+	LastFinancialYearActual            float64
+	NextFinanicalYearEst               float64
+	ThisFinancialYearEst               float64
+	Q1Est                              float64
+	EarningsExpectedSurprisePrediction float64
+	NextReportDate                     sql.NullTime
+}
+
+func (q *Queries) SaveZacksGrowthRow(ctx context.Context, arg SaveZacksGrowthRowParams) error {
+	_, err := q.db.ExecContext(ctx, saveZacksGrowthRow,
+		arg.Symbol,
+		arg.Company,
+		arg.Price,
+		arg.GrowthScore,
+		arg.YearOverYearQ0Growth,
+		arg.LongTermGrowthPercent,
+		arg.LastFinancialYearActual,
+		arg.NextFinanicalYearEst,
+		arg.ThisFinancialYearEst,
+		arg.Q1Est,
+		arg.EarningsExpectedSurprisePrediction,
+		arg.NextReportDate,
+	)
+	return err
+}

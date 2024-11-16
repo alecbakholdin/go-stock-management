@@ -28,3 +28,19 @@ type ZacksDaily struct {
 	MomentumScore sql.NullString
 	VgmScore      sql.NullString
 }
+
+type ZacksGrowth struct {
+	Created                            time.Time
+	Symbol                             string
+	Company                            sql.NullString
+	Price                              float64
+	GrowthScore                        sql.NullString
+	YearOverYearQ0Growth               float64
+	LongTermGrowthPercent              float64
+	LastFinancialYearActual            float64
+	ThisFinancialYearEst               float64
+	NextFinanicalYearEst               float64
+	Q1Est                              float64
+	EarningsExpectedSurprisePrediction float64
+	NextReportDate                     sql.NullTime
+}

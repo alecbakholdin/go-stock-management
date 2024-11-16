@@ -5,16 +5,16 @@ import (
 	"stock-management/internal/models"
 )
 
-type SaveZacksDailyRow interface {
+type DailyRowSaver interface {
 	SaveZacksDailyRow(ctx context.Context, arg models.SaveZacksDailyRowParams) error
 }
 
 type dailyUpdate struct {
-	q SaveZacksDailyRow
+	q DailyRowSaver
 }
 
 
-func NewDaily(q SaveZacksDailyRow, url, formValue string) *zacksExecutor[zacksDailyCSvRow] {
+func NewDaily(q DailyRowSaver, url, formValue string) *zacksExecutor[zacksDailyCSvRow] {
 	return &zacksExecutor[zacksDailyCSvRow]{
 		ms:        &dailyUpdate{q: q},
 		tableName: "Daily",

@@ -1,6 +1,9 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 func NullStringIfZero(v string) sql.NullString {
 	return sql.NullString{String: v, Valid: v != ""}
@@ -20,4 +23,8 @@ func NullInt32IfZero(v int32) sql.NullInt32 {
 
 func NullFloat64IfZero(v float64) sql.NullFloat64 {
 	return sql.NullFloat64{Float64: v, Valid: v != 0}
+}
+
+func NullTimeIfZero(t time.Time) sql.NullTime {
+	return sql.NullTime{Time: t, Valid: !t.IsZero()}
 }

@@ -1,7 +1,6 @@
 -- name: ListCompanies :many
 SELECT *
 FROM company;
-
 -- name: SaveZacksDailyRow :exec
 INSERT INTO zacks_daily (
         symbol,
@@ -17,3 +16,19 @@ INSERT INTO zacks_daily (
         vgm_score
     )
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+-- name: SaveZacksGrowthRow :exec
+INSERT INTO zacks_growth (
+        symbol,
+        company,
+        price,
+        growth_score,
+        year_over_year_q0_growth,
+        long_term_growth_percent,
+        last_financial_year_actual,
+        next_finanical_year_est,
+        this_financial_year_est,
+        q1_est,
+        earnings_expected_surprise_prediction,
+        next_report_date
+    )
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
