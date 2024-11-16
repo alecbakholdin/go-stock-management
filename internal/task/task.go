@@ -24,30 +24,33 @@ type TaskExecutor[T any] struct {
 	status     string
 	Progress   int
 	inProgress atomic.Bool
-	urlPath string
+	urlPath    string
 	ex         Executor[T]
 }
 
 func New[T any](e *echo.Echo, title, urlPath string, ex Executor[T]) *TaskExecutor[T] {
 	return &TaskExecutor[T]{
-		e:     e,
-		title: title,
+		e:       e,
+		title:   title,
 		urlPath: urlPath,
-		ex:    ex,
-		status: "Idle",
+		ex:      ex,
+		status:  "Idle",
 	}
 }
 
 func (t *TaskExecutor[T]) Execute() {
 	if !t.inProgress.CompareAndSwap(false, true) {
-		return 
+		return
 	}
-	defer t.ResetDelay()
 
 	t.status = "Fetching data"
+	go t.fetchAndSave()
+}
+func (t *TaskExecutor[T]) fetchAndSave() {
+	defer t.ResetDelay()
 	data, err := t.ex.Fetch()
 	if err != nil {
-		t.Error("Error fetching for " + t.title, ": ", err)
+		t.Error("Error fetching for "+t.title, ": ", err)
 		t.status = "Error fetching from source"
 		return
 	}
