@@ -45,7 +45,7 @@ func (t *TaskExecutor[T]) Execute() {
 	t.status = "Fetching data"
 	data, err := t.ex.Fetch()
 	if err != nil {
-		t.Error("Error fetching for " + t.title)
+		t.Error("Error fetching for " + t.title, ": ", err)
 		t.status = "Error fetching from source"
 		return
 	}
