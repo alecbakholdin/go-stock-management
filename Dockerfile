@@ -8,5 +8,6 @@ RUN go mod download && go mod verify
 
 COPY . .
 RUN go build -v -o ./app ./cmd/main.go
+EXPOSE 1323
 
 CMD ["./app"]

@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"context"
 	"database/sql"
-	"os"
 	"stock-management/internal/models"
 	"stock-management/internal/task"
 	"stock-management/internal/task/zacks"
@@ -20,13 +19,14 @@ import (
 )
 
 type EnvConfig struct {
+	Port                  string `env:"PORT"`
 	SigningSecret         string `env:"SIGNING_SECRET,required"`
 	AdminUsername         string `env:"ADMIN_USERNAME,required"`
 	AdminPassword         string `env:"ADMIN_PASSWORD,required"`
 	MySqlConnectionString string `env:"MYSQL_CONNECTION_STRING,required"`
 
-	ZacksUrl string `env:"ZACKS_URL,required"`
-	ZacksDailyFormValue string `env:"ZACKS_DAILY_FORM_VALUE,required"`
+	ZacksUrl             string `env:"ZACKS_URL,required"`
+	ZacksDailyFormValue  string `env:"ZACKS_DAILY_FORM_VALUE,required"`
 	ZacksGrowthFormValue string `env:"ZACKS_GROWTH_FORM_VALUE,required"`
 }
 
@@ -86,5 +86,5 @@ func main() {
 		}
 	}
 
-	e.Logger.Fatal(e.Start(cmp.Or(os.Getenv("PORT"), ":1323")))
+	e.Logger.Fatal(e.Start(":" + cmp.Or(ec.Port, "1323")))
 }
