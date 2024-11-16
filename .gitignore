@@ -3,3 +3,5 @@ tmp
 mysql_data
 .vscode
 **_templ.txt
+env.sh
+.env*

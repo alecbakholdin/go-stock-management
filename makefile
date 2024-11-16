@@ -2,6 +2,11 @@ BUILD_CMD=go build -o ./tmp/stock-management cmd/main.go
 GOOSE_COMMAND=goose -dir ./config/migrations mysql "root:password@/stock_ratings"
 MYSQL=root:password@tcp(localhost:3306)/stock_ratings
 
+ifneq (,$(wildcard ./.env))
+	include .env
+	export
+endif
+
 build: build-deps
 	$(BUILD_CMD)
 
@@ -46,8 +51,5 @@ run: export MYSQL_CONNECTION_STRING = $(MYSQL)
 run: export SIGNING_SECRET = supersecret
 run: export ADMIN_USERNAME = admin
 run: export ADMIN_PASSWORD = trust
-run: export ZACKS_URL = https://www.zacks.com/portfolios/tools/ajxExportExel.php
-run: export ZACKS_DAILY_FORM_VALUE = 2282242_update_zYjM1ADO0kjN
-run: export ZACKS_GROWTH_FORM_VALUE = 2282242_growth_zYjM1ADO0kjN
 run: build mysql
 	./tmp/stock-management
