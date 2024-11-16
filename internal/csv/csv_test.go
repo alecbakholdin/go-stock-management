@@ -31,7 +31,7 @@ func TestParse(t *testing.T) {
 	}
 	inputStr := `String,Float,Int,Ignore
 string,1.01,3,ignore
-stringtwo,1.02,4,ignore
+stringtwo,1.02 %,4,ignore
 `
 
 	outputArr, err := Parse(strings.NewReader(inputStr), &testStruct{})

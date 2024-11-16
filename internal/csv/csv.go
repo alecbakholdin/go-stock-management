@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"slices"
 	"strconv"
+	"strings"
 
 	"github.com/labstack/gommon/log"
 )
@@ -68,7 +69,8 @@ func Parse[T any](r io.Reader, row *T) ([]T, error) {
 			case reflect.Float32:
 				fallthrough
 			case reflect.Float64:
-				if floatVal, err := strconv.ParseFloat(line[i], 64); err != nil {
+				str := strings.TrimSpace(strings.TrimSuffix(line[i], "%"))
+				if floatVal, err := strconv.ParseFloat(str, 64); err != nil {
 					log.Warn("Invalid float value ", line[i], " on line ", lineNum, " column ", i)
 				} else if structValue.OverflowFloat(floatVal) {
 					log.Warn("Float value overflow ", line[i], " on line ", lineNum, " column ", i)
