@@ -16,18 +16,24 @@ type Executor[T any] interface {
 }
 
 type Task interface {
+	Execute() 
+	GetHandler(echo.Context) error
+	PostHandler(echo.Context) error
+	Title() string
+	Status() string
+	InProgress() bool
+	UrlPath() string
 }
 
 type TaskExecutor[T any] struct {
 	title      string
 	status     string
-	Progress   int
 	inProgress atomic.Bool
 	urlPath    string
 	ex         Executor[T]
 }
 
-func New[T any](title, urlPath string, ex Executor[T]) *TaskExecutor[T] {
+func New[T any](title, urlPath string, ex Executor[T]) Task {
 	return &TaskExecutor[T]{
 		title:   title,
 		urlPath: urlPath,
@@ -44,11 +50,12 @@ func (t *TaskExecutor[T]) Execute() {
 	t.status = "Fetching data"
 	go t.fetchAndSave()
 }
+
 func (t *TaskExecutor[T]) fetchAndSave() {
 	defer t.ResetDelay()
 	data, err := t.ex.Fetch()
 	if err != nil {
-		log.Errorf("Error fetching for %s: %s", t.Title(), err)
+		log.Errorf("Error fetching for %s: %s",t.Title(), err)
 		t.status = "Error fetching from source"
 		return
 	}
@@ -97,7 +104,6 @@ func (t *TaskExecutor[T]) ResetDelay() {
 }
 
 func (t *TaskExecutor[T]) Reset() {
-	t.Progress = 0
 	t.status = "Idle"
 	t.inProgress.Store(false)
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func Handler(tasks []task.TaskStatus) echo.HandlerFunc {
+func Handler(tasks []task.Task) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		return web.RenderOk(c, Root(tasks))
 	}

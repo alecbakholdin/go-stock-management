@@ -2,12 +2,13 @@ package task
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestResetTask(t *testing.T) {
-	task := New("title", "/testing", &testEx{fetch: []inputType{}})
+	task := New("title", "/testing", &testEx{fetch: []inputType{}}).(*TaskExecutor[inputType])
 	task.inProgress.Store(true)
 	task.status = "status"
 	task.Reset()
@@ -21,6 +22,9 @@ func TestExecuteTask(t *testing.T) {
 	testExecutor := &testEx{fetch: []inputType{{fieldOne: "one", fieldTwo: "two"}}}
 	task := New("title", "/testing", testExecutor)
 	task.Execute()
+	for task.InProgress() {
+		time.Sleep(time.Millisecond)
+	}
 	assert.ElementsMatch(t, []inputType{{fieldOne: "one", fieldTwo: "two"}}, testExecutor.written)
 }
 

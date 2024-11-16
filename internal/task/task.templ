@@ -1,16 +1,9 @@
 package task
 
-type TaskStatus interface {
-	Title() string
-	InProgress() bool
-	Status() string
-	UrlPath() string
-}
-
-templ Tasks(t []TaskStatus) {
+templ Tasks(t []Task) {
 	<div class="max-w-[600px] space-y-4 mx-auto mt-12">
 		<div><span class="text-xl font-semibold text-center">Stock Management</span></div>
-        <hr/>
+		<hr/>
 		<div class="flex flex-col gap-2 w-full items-center">
 			for _, task := range t {
 				@TaskRow(task)
@@ -19,7 +12,7 @@ templ Tasks(t []TaskStatus) {
 	</div>
 }
 
-templ TaskRow(t TaskStatus) {
+templ TaskRow(t Task) {
 	<div
 		class="task-row grid grid-cols-[auto_1fr] w-full gap-3"
 		hx-swap="outerHTML"

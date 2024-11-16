@@ -10,6 +10,7 @@ import (
 	"stock-management/internal/task/zacks"
 	"stock-management/internal/web/login"
 	"stock-management/internal/web/root"
+	"time"
 
 	"github.com/caarlos0/env/v6"
 	_ "github.com/go-sql-driver/mysql"
@@ -17,6 +18,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	"github.com/robfig/cron/v3"
 )
 
 type EnvConfig struct {
@@ -62,15 +64,32 @@ func initDb(ec EnvConfig) *models.Queries {
 	return models.New(db)
 }
 
-func initAndScheduleTasks(ec EnvConfig, q *models.Queries) []task.TaskStatus {
+func initAndScheduleTasks(ec EnvConfig, q *models.Queries) []task.Task {
 	zacksDailyTask := task.New("Zacks Daily", "/zacksdaily", zacks.NewDaily(q, ec.ZacksUrl, ec.ZacksDailyFormValue))
 	zacksGrowthTask := task.New("Zacks Growth", "/zacksgrowth", zacks.NewGrowth(q, ec.ZacksUrl, ec.ZacksGrowthFormValue))
 	yahooInsightsTask := task.New("Yahoo Insights", "/yahooinsights", yahoo.NewInsights(q, ec.YahooUrl))
 
-	return []task.TaskStatus{zacksDailyTask, zacksGrowthTask, yahooInsightsTask}
+	tasks := []task.Task{zacksDailyTask, zacksGrowthTask, yahooInsightsTask}
+
+	allTasks := func() {
+		for _, task := range tasks {
+			task.Execute()
+		}
+	}
+
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		panic("error loading location: " + err.Error())
+	}
+	c := cron.New(cron.WithLocation(loc))
+	c.AddFunc("0 0 10,14 * * * MON-FRI", allTasks)
+	c.AddFunc("0 30 16 * * * MON-FRI", allTasks)
+	c.Start()
+
+	return tasks
 }
 
-func initEchoClient(ec EnvConfig, tasks []task.TaskStatus) *echo.Echo {
+func initEchoClient(ec EnvConfig, tasks []task.Task) *echo.Echo {
 	e := echo.New()
 	e.Logger.SetLevel(log.INFO)
 	e.Logger.SetHeader("${time_rfc3339} [id=${id}] ${level}")
@@ -95,18 +114,9 @@ func initEchoClient(ec EnvConfig, tasks []task.TaskStatus) *echo.Echo {
 
 	e.GET("/", root.Handler(tasks))
 	e.POST("/login", login.Handler(ec.SigningSecret, ec.AdminUsername, ec.AdminPassword))
-	type TaskUrlGetPost interface {
-		UrlPath() string
-		GetHandler(c echo.Context) error
-		PostHandler(c echo.Context) error
-	}
 	for _, task := range tasks {
-		if handlers, ok := task.(TaskUrlGetPost); ok {
-			e.GET(handlers.UrlPath(), handlers.GetHandler)
-			e.POST(handlers.UrlPath(), handlers.PostHandler)
-		} else {
-			panic("task does not have handlers")
-		}
+		e.GET(task.UrlPath(), task.GetHandler)
+		e.POST(task.UrlPath(), task.PostHandler)
 	}
 
 	return e
