@@ -4,8 +4,6 @@ import (
 	"cmp"
 	"context"
 	"database/sql"
-	"fmt"
-	"os"
 	"stock-management/internal/models"
 	"stock-management/internal/task"
 	"stock-management/internal/task/zacks"
@@ -33,7 +31,6 @@ type EnvConfig struct {
 }
 
 func main() {
-	fmt.Println("env variable", os.Getenv("ADMIN_USERNAME"))
 	var ec EnvConfig
 	if err := env.Parse(&ec); err != nil {
 		panic(err.Error())
