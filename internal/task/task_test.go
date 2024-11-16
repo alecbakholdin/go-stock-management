@@ -3,12 +3,11 @@ package task
 import (
 	"testing"
 
-	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestResetTask(t *testing.T) {
-	task := New(echo.New(), "title", "/testing", &testEx{fetch: []inputType{}})
+	task := New("title", "/testing", &testEx{fetch: []inputType{}})
 	task.inProgress.Store(true)
 	task.status = "status"
 	task.Reset()
@@ -20,7 +19,7 @@ func TestResetTask(t *testing.T) {
 
 func TestExecuteTask(t *testing.T) {
 	testExecutor := &testEx{fetch: []inputType{{fieldOne: "one", fieldTwo: "two"}}}
-	task := New(echo.New(), "title", "/testing", testExecutor)
+	task := New("title", "/testing", testExecutor)
 	task.Execute()
 	assert.ElementsMatch(t, []inputType{{fieldOne: "one", fieldTwo: "two"}}, testExecutor.written)
 }

@@ -34,19 +34,43 @@ type EnvConfig struct {
 }
 
 func main() {
+	log.SetHeader("${time_rfc3339} ${level}")
+	log.SetLevel(log.INFO)
+
+	ec := parseEnv()
+	q := initDb(ec)
+
+	tasks := initAndScheduleTasks(ec, q)
+
+	e := initEchoClient(ec, tasks)
+	e.Logger.Fatal(e.Start(":" + cmp.Or(ec.Port, "1323")))
+}
+
+func parseEnv() EnvConfig {
 	var ec EnvConfig
 	if err := env.Parse(&ec); err != nil {
 		panic(err.Error())
 	}
+	return ec
+}
 
+func initDb(ec EnvConfig) *models.Queries {
 	db, err := sql.Open("mysql", ec.MySqlConnectionString)
 	if err != nil {
 		panic("Error connecting to mysql " + err.Error())
 	}
-	q := models.New(db)
+	return models.New(db)
+}
 
-	log.SetHeader("${time_rfc3339} ${level}")
-	log.SetLevel(log.INFO)
+func initAndScheduleTasks(ec EnvConfig, q *models.Queries) []task.TaskStatus {
+	zacksDailyTask := task.New("Zacks Daily", "/zacksdaily", zacks.NewDaily(q, ec.ZacksUrl, ec.ZacksDailyFormValue))
+	zacksGrowthTask := task.New("Zacks Growth", "/zacksgrowth", zacks.NewGrowth(q, ec.ZacksUrl, ec.ZacksGrowthFormValue))
+	yahooInsightsTask := task.New("Yahoo Insights", "/yahooinsights", yahoo.NewInsights(q, ec.YahooUrl))
+
+	return []task.TaskStatus{zacksDailyTask, zacksGrowthTask, yahooInsightsTask}
+}
+
+func initEchoClient(ec EnvConfig, tasks []task.TaskStatus) *echo.Echo {
 	e := echo.New()
 	e.Logger.SetLevel(log.INFO)
 	e.Logger.SetHeader("${time_rfc3339} [id=${id}] ${level}")
@@ -68,11 +92,6 @@ func main() {
 		},
 		ContinueOnIgnoredError: true,
 	}))
-	tasks := []task.TaskStatus{
-		task.New(e, "Zacks Daily", "/zacksdaily", zacks.NewDaily(q, ec.ZacksUrl, ec.ZacksDailyFormValue)),
-		task.New(e, "Zacks Growth", "/zacksgrowth", zacks.NewGrowth(q, ec.ZacksUrl, ec.ZacksGrowthFormValue)),
-		task.New(e, "Yahoo Insights", "/yahooinsights", yahoo.NewInsights(q, ec.YahooUrl)),
-	}
 
 	e.GET("/", root.Handler(tasks))
 	e.POST("/login", login.Handler(ec.SigningSecret, ec.AdminUsername, ec.AdminPassword))
@@ -90,5 +109,5 @@ func main() {
 		}
 	}
 
-	e.Logger.Fatal(e.Start(":" + cmp.Or(ec.Port, "1323")))
+	return e
 }

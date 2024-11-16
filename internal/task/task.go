@@ -19,7 +19,6 @@ type Task interface {
 }
 
 type TaskExecutor[T any] struct {
-	e          *echo.Echo
 	title      string
 	status     string
 	Progress   int
@@ -28,9 +27,8 @@ type TaskExecutor[T any] struct {
 	ex         Executor[T]
 }
 
-func New[T any](e *echo.Echo, title, urlPath string, ex Executor[T]) *TaskExecutor[T] {
+func New[T any](title, urlPath string, ex Executor[T]) *TaskExecutor[T] {
 	return &TaskExecutor[T]{
-		e:       e,
 		title:   title,
 		urlPath: urlPath,
 		ex:      ex,
@@ -50,14 +48,14 @@ func (t *TaskExecutor[T]) fetchAndSave() {
 	defer t.ResetDelay()
 	data, err := t.ex.Fetch()
 	if err != nil {
-		t.Error("Error fetching for "+t.title, ": ", err)
+		log.Errorf("Error fetching for %s: %s", t.Title(), err)
 		t.status = "Error fetching from source"
 		return
 	}
 
 	t.status = "Saving rows to DB"
 	if n, err := t.ex.Save(data); err != nil {
-		t.Error("Error saving to DB for " + t.title + ": " + err.Error())
+		log.Errorf("Error saving to DB for %s: %s", t.Title(), err.Error())
 		t.status = "Error saving to DB"
 		return
 	} else {
@@ -73,14 +71,6 @@ func (t *TaskExecutor[T]) GetHandler(c echo.Context) error {
 func (t *TaskExecutor[T]) PostHandler(c echo.Context) error {
 	t.Execute()
 	return web.RenderOk(c, TaskRow(t))
-}
-
-func (t *TaskExecutor[T]) Info(i ...interface{}) {
-	t.e.Logger.Info(i...)
-}
-
-func (t *TaskExecutor[T]) Error(i ...interface{}) {
-	t.e.Logger.Error(i...)
 }
 
 func (t *TaskExecutor[T]) Title() string {
