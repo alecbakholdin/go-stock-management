@@ -11,23 +11,23 @@ import (
 )
 
 const listCompanies = `-- name: ListCompanies :many
-SELECT symbol, name
+SELECT symbol
 FROM company
 `
 
-func (q *Queries) ListCompanies(ctx context.Context) ([]Company, error) {
+func (q *Queries) ListCompanies(ctx context.Context) ([]string, error) {
 	rows, err := q.db.QueryContext(ctx, listCompanies)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Company
+	var items []string
 	for rows.Next() {
-		var i Company
-		if err := rows.Scan(&i.Symbol, &i.Name); err != nil {
+		var symbol string
+		if err := rows.Scan(&symbol); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, symbol)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -36,6 +36,39 @@ func (q *Queries) ListCompanies(ctx context.Context) ([]Company, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const saveYahooInsightsRow = `-- name: SaveYahooInsightsRow :exec
+INSERT INTO yahoo_insights (
+        symbol,
+        short_term,
+        mid_term,
+        long_term,
+        estimated_return,
+        fair_value
+    )
+VALUES (?, ?, ?, ?, ?, ?)
+`
+
+type SaveYahooInsightsRowParams struct {
+	Symbol          string
+	ShortTerm       sql.NullString
+	MidTerm         sql.NullString
+	LongTerm        sql.NullString
+	EstimatedReturn sql.NullInt32
+	FairValue       sql.NullString
+}
+
+func (q *Queries) SaveYahooInsightsRow(ctx context.Context, arg SaveYahooInsightsRowParams) error {
+	_, err := q.db.ExecContext(ctx, saveYahooInsightsRow,
+		arg.Symbol,
+		arg.ShortTerm,
+		arg.MidTerm,
+		arg.LongTerm,
+		arg.EstimatedReturn,
+		arg.FairValue,
+	)
+	return err
 }
 
 const saveZacksDailyRow = `-- name: SaveZacksDailyRow :exec

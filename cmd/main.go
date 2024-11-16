@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"stock-management/internal/models"
 	"stock-management/internal/task"
+	"stock-management/internal/task/yahoo"
 	"stock-management/internal/task/zacks"
 	"stock-management/internal/web/login"
 	"stock-management/internal/web/root"
@@ -28,6 +29,8 @@ type EnvConfig struct {
 	ZacksUrl             string `env:"ZACKS_URL,required"`
 	ZacksDailyFormValue  string `env:"ZACKS_DAILY_FORM_VALUE,required"`
 	ZacksGrowthFormValue string `env:"ZACKS_GROWTH_FORM_VALUE,required"`
+
+	YahooUrl string `env:"YAHOO_URL_PREFIX,required"`
 }
 
 func main() {
@@ -68,6 +71,7 @@ func main() {
 	tasks := []task.TaskStatus{
 		task.New(e, "Zacks Daily", "/zacksdaily", zacks.NewDaily(q, ec.ZacksUrl, ec.ZacksDailyFormValue)),
 		task.New(e, "Zacks Growth", "/zacksgrowth", zacks.NewGrowth(q, ec.ZacksUrl, ec.ZacksGrowthFormValue)),
+		task.New(e, "Yahoo Insights", "/yahooinsights", yahoo.NewInsights(q, ec.YahooUrl)),
 	}
 
 	e.GET("/", root.Handler(tasks))

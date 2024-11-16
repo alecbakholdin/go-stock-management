@@ -32,3 +32,13 @@ INSERT INTO zacks_growth (
         next_report_date
     )
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+-- name: SaveYahooInsightsRow :exec
+INSERT INTO yahoo_insights (
+        symbol,
+        short_term,
+        mid_term,
+        long_term,
+        estimated_return,
+        fair_value
+    )
+VALUES (?, ?, ?, ?, ?, ?);

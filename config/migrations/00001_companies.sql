@@ -1,8 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE company (
-    symbol VARCHAR(20),
-    name VARCHAR(255),
+    symbol VARCHAR(20) NOT NULL,
     PRIMARY KEY (symbol)
 );
 -- +goose StatementEnd

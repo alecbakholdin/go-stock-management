@@ -10,8 +10,17 @@ import (
 )
 
 type Company struct {
-	Symbol sql.NullString
-	Name   sql.NullString
+	Symbol string
+}
+
+type YahooInsight struct {
+	Created         time.Time
+	Symbol          string
+	ShortTerm       sql.NullString
+	MidTerm         sql.NullString
+	LongTerm        sql.NullString
+	FairValue       sql.NullString
+	EstimatedReturn sql.NullInt32
 }
 
 type ZacksDaily struct {
