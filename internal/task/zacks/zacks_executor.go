@@ -14,7 +14,7 @@ type rowSaver[T any] interface {
 	save(T) error
 }
 
-type zacksExecutor[T any] struct {
+type zacksExecutor[T interface{Key() string}] struct {
 	ms        rowSaver[T]
 	url       string
 	formValue string
@@ -35,16 +35,16 @@ func (z *zacksExecutor[TCsv]) Fetch() ([]TCsv, error) {
 	return csv.Parse(res.Body, new(TCsv))
 }
 
-func (z *zacksExecutor[TCsv]) Save(rows []TCsv) error {
+func (z *zacksExecutor[TCsv]) Save(rows []TCsv) (int, error) {
 	num := 0
 	for i, row := range rows {
 		if err := z.ms.save(row); err != nil {
+			log.Warnf("Zacks %s: error saving row %d for sticker %s: %s", z.tableName, i, row.Key(), err.Error())
 			log.Warn("Error saving Zacks ", z.tableName, " row for ", i, ": ", err)
 		} else {
 			num += 1
 		}
 	}
-	log.Info("Saved ", num, " Zacks ", z.tableName, " rows")
 
-	return nil
+	return num, nil
 }

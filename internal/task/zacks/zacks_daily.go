@@ -53,3 +53,7 @@ type zacksDailyCSvRow struct {
 	MomentumScore string  `csv:"Momentum Score"`
 	VGMScore      string  `csv:"VGM Score"`
 }
+
+func (z zacksDailyCSvRow) Key() string {
+	return z.Symbol
+}

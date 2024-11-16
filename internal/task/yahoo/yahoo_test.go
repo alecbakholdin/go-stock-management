@@ -48,7 +48,8 @@ func TestYahoo(t *testing.T) {
 	assert.EqualValues(t, expectedJsonRows[0], jsonRows[0])
 	assert.EqualValues(t, expectedJsonRows[1], jsonRows[1])
 
-	if !assert.NoError(t, yahooExecutor.Save(jsonRows)) {
+	n, err := yahooExecutor.Save(jsonRows)
+	if !assert.NoError(t, err) {
 		t.FailNow()
 	}
 	expectedSqlRows := []models.SaveYahooInsightsRowParams{
@@ -69,6 +70,7 @@ func TestYahoo(t *testing.T) {
 			FairValue:       sql.NullString{String: "Overvalued", Valid: true},
 		},
 	}
+	assert.Equal(t, 2, n)
 	assert.Equal(t, len(expectedSqlRows), len(yahooSaver.written))
 	assert.Equal(t, expectedSqlRows[0], yahooSaver.written[0])
 	assert.Equal(t, expectedSqlRows[1], yahooSaver.written[1])

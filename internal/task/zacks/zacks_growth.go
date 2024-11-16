@@ -62,3 +62,7 @@ type zacksGrowthCsvRow struct {
 	EarningsExpectedSurprisePrediction float64 `csv:"Earnings ESP"`
 	NextReportDate                     string  `csv:"Next Report Date"`
 }
+
+func (z zacksGrowthCsvRow) Key() string {
+	return z.Symbol
+}

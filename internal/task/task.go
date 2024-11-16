@@ -1,16 +1,18 @@
 package task
 
 import (
+	"fmt"
 	"stock-management/internal/web"
 	"sync/atomic"
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 type Executor[T any] interface {
 	Fetch() ([]T, error)
-	Save([]T) error
+	Save([]T) (int, error)
 }
 
 type Task interface {
@@ -51,12 +53,14 @@ func (t *TaskExecutor[T]) Execute() {
 	}
 
 	t.status = "Saving rows to DB"
-	if err := t.ex.Save(data); err != nil {
+	if n, err := t.ex.Save(data); err != nil {
 		t.Error("Error saving to DB for " + t.title + ": " + err.Error())
 		t.status = "Error saving to DB"
 		return
+	} else {
+		t.status = fmt.Sprintf("Saved %d rows to database", n)
+		log.Infof("Saved %d rows to database for executor %s", n, t.Title())
 	}
-	t.status = "Finished"
 }
 
 func (t *TaskExecutor[T]) GetHandler(c echo.Context) error {

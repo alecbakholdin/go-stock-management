@@ -34,7 +34,8 @@ func TestZacksGrowth(t *testing.T) {
 	}
 	assert.ElementsMatch(t, expectedCsvRows, csvRows)
 
-	if !assert.NoError(t, growthExecutor.Save(csvRows)) {
+	n, err := growthExecutor.Save(csvRows)
+	if !assert.NoError(t, err) {
 		return
 	}
 	expectedSqlRows := []models.SaveZacksGrowthRowParams {
@@ -67,9 +68,10 @@ func TestZacksGrowth(t *testing.T) {
 			NextReportDate: sql.NullTime{},
 		},
 	}
+	assert.Equal(t, 2, n)
+	assert.Equal(t, 2, len(growthSaver.saved))
 	assert.EqualValues(t, expectedSqlRows[0], growthSaver.saved[0])
 	assert.EqualValues(t, expectedSqlRows[1], growthSaver.saved[1])
-	assert.Equal(t, 2, len(growthSaver.saved))
 }
 
 func mustParseDate(dateStr string) time.Time {

@@ -33,7 +33,8 @@ func TestZacksDaily(t *testing.T) {
 		{"KNDI", "Kandi Technologies Group", 1.28, 0.03, 2.40, 56, 0, "NA", "NA", "NA", "NA"},
 	}
 	assert.ElementsMatch(t, expectedFetch, rows)
-	if !assert.NoError(t, z.Save(rows)) {
+	n, err := z.Save(rows)
+	if !assert.NoError(t, err) {
 		t.FailNow()
 	}
 
@@ -65,7 +66,10 @@ func TestZacksDaily(t *testing.T) {
 			VgmScore:      sql.NullString{},
 		},
 	}
-	assert.ElementsMatch(t, expectedSave, s.savedRows)
+	assert.Equal(t, 2, len(s.savedRows))
+	assert.Equal(t, 2, n)
+	assert.Equal(t, expectedSave[0], s.savedRows[0])
+	assert.Equal(t, expectedSave[1], s.savedRows[1])
 }
 
 type zacksDailySaver struct {

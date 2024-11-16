@@ -76,11 +76,12 @@ func (y *yahooExecutor) getRowBatch(batch []string) ([]yahooJsonRow, error) {
 	return jsonResponse.Finance.Result, nil
 }
 
-func (f *yahooExecutor) Save(rows []yahooJsonRow) error {
+func (f *yahooExecutor) Save(rows []yahooJsonRow) (int, error) {
+	num := 0
 	for i, row := range rows {
 		estimatedReturn, err := strconv.Atoi(strings.TrimSuffix(row.InstrumentInfo.Valuation.Discount, "%"))
 		if err != nil {
-			log.Warnf("Error converting %s to int for Yahoo Insights executor for row %d: %s", row.InstrumentInfo.Valuation.Discount, i, err.Error())
+			log.Warnf("Error converting %s to int for Yahoo Insights executor for row %d, symbol %s: %s", row.InstrumentInfo.Valuation.Discount, i, row.Symbol, err.Error())
 		}
 		sqlRow := models.SaveYahooInsightsRowParams{
 			Symbol:          row.Symbol,
@@ -91,10 +92,12 @@ func (f *yahooExecutor) Save(rows []yahooJsonRow) error {
 			EstimatedReturn: sql.NullInt32{Int32: int32(estimatedReturn), Valid: err == nil},
 		}
 		if err := f.q.SaveYahooInsightsRow(context.Background(), sqlRow); err != nil {
-			log.Warnf("Error saving Yahoo Insights row on line %d: %s", i, err.Error())
+			log.Warnf("Error saving Yahoo Insights row on line %d, sticker %s: %s", i, row.Symbol, err.Error())
+		} else {
+			num += 1
 		}
 	}
-	return nil
+	return num, nil
 }
 
 type yahooJsonResponse struct {

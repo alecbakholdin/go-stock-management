@@ -39,7 +39,7 @@ func (t *testEx) Fetch() ([]inputType, error) {
 	return t.fetch, nil
 }
 
-func (t *testEx) Save(i []inputType) error {
+func (t *testEx) Save(i []inputType) (int, error) {
 	t.written = i
-	return nil
+	return 0, nil
 }
