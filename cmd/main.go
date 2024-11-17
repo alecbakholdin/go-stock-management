@@ -11,6 +11,7 @@ import (
 	"stock-management/internal/util/must"
 	"stock-management/internal/web/login"
 	"stock-management/internal/web/root"
+	"strings"
 
 	"github.com/caarlos0/env/v6"
 	_ "github.com/go-sql-driver/mysql"
@@ -57,7 +58,12 @@ func parseEnv() EnvConfig {
 }
 
 func initDb(ec EnvConfig) *models.Queries {
-	db, err := sql.Open("mysql", ec.MySqlConnectionString)
+	if atLoc := strings.Index(ec.MySqlConnectionString, "@"); atLoc < 0 {
+		log.Warn("MYSQL_CONNECTION_STRING missing @?")
+	} else if strings.Contains(ec.MySqlConnectionString[atLoc:], "?") {
+		panic("MYSQL_CONNECTION_STRING should not contain any query params")
+	}
+	db, err := sql.Open("mysql", ec.MySqlConnectionString+"?parseTime=true")
 	if err != nil {
 		panic("Error connecting to mysql " + err.Error())
 	}
