@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
-	"stock-management/internal/csv"
+	"stock-management/internal/util/csv"
 	"strconv"
 
 	"github.com/labstack/gommon/log"

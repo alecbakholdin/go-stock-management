@@ -8,6 +8,7 @@ import (
 	"stock-management/internal/task"
 	"stock-management/internal/task/yahoo"
 	"stock-management/internal/task/zacks"
+	"stock-management/internal/util/must"
 	"stock-management/internal/web/login"
 	"stock-management/internal/web/root"
 	"time"
@@ -77,11 +78,7 @@ func initAndScheduleTasks(ec EnvConfig, q *models.Queries) []task.Task {
 		}
 	}
 
-	loc, err := time.LoadLocation("America/New_York")
-	if err != nil {
-		panic("error loading location: " + err.Error())
-	}
-	c := cron.New(cron.WithLocation(loc))
+	c := cron.New(cron.WithLocation(must.MustLoadLocation("America/New_York")))
 	c.AddFunc("0 0 10,14 * * * MON-FRI", allTasks)
 	c.AddFunc("0 30 16 * * * MON-FRI", allTasks)
 	c.Start()

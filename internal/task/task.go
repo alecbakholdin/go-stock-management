@@ -2,8 +2,11 @@ package task
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"stock-management/internal/models"
+	"stock-management/internal/util/must"
 	"stock-management/internal/web"
 	"sync/atomic"
 	"time"
@@ -47,7 +50,7 @@ func New[T any](q TaskHistoryTable, title, urlPath string, ex Executor[T]) Task 
 		title:   title,
 		urlPath: urlPath,
 		ex:      ex,
-		status:  "Idle",
+		status:  "",
 	}
 }
 
@@ -56,19 +59,20 @@ func (t *TaskExecutor[T]) Execute() {
 		return
 	}
 
-	t.status = "Fetching data"
+	t.status = "fetching data"
 	go t.fetchAndSave()
 }
 
+var loc = must.MustLoadLocation("America/New_York")
 func (t *TaskExecutor[T]) fetchAndSave() {
 	history := &models.SaveTaskHistoryParams{
 		TaskName:   t.Title(),
-		StartTime:  time.Now(),
+		StartTime:  time.Now().In(loc),
 		TaskStatus: models.TaskHistoryTaskStatusFailed,
 	}
 	defer t.ResetDelay()
 	defer t.saveHistory(history)
-
+	
 	data, err := t.ex.Fetch()
 	if err != nil {
 		t.status = fmt.Sprintf("error fetching from source: %s", err.Error())
@@ -76,7 +80,7 @@ func (t *TaskExecutor[T]) fetchAndSave() {
 		return
 	}
 
-	t.status = "Saving rows to DB"
+	t.status = "saving rows to DB"
 	n, err := t.ex.Save(data)
 	if err != nil {
 		t.status = fmt.Sprintf("error saving to database: %s", err.Error())
@@ -85,13 +89,13 @@ func (t *TaskExecutor[T]) fetchAndSave() {
 	}
 
 	history.TaskStatus = models.TaskHistoryTaskStatusSucceeded
-	t.status = fmt.Sprintf("Saved %d rows to database", n)
+	t.status = fmt.Sprintf("saved %d rows to database", n)
 	log.Infof("%s for task %s", t.status, t.Title())
 }
 
 func (t *TaskExecutor[T]) saveHistory(history *models.SaveTaskHistoryParams) {
 	history.Details = t.status
-	history.EndTime = time.Now()
+	history.EndTime = time.Now().In(loc)
 	if err := t.q.SaveTaskHistory(context.Background(), *history); err != nil {
 		log.Errorf("Failed to save history for %s: %s", t.Title(), err.Error())
 	}
@@ -115,6 +119,15 @@ func (t *TaskExecutor[T]) InProgress() bool {
 }
 
 func (t *TaskExecutor[T]) Status() string {
+	if t.status != "" {
+		return t.status
+	}
+	if history, err := t.q.GetLatestTaskHistory(context.Background(), t.Title()); err != nil && !errors.Is(err, sql.ErrNoRows){
+		log.Errorf("During %s - error getting latest task history: %s", t.Title(), err.Error())
+	} else if err == nil {
+		startStr := history.StartTime.Format("Jan 2 2006 3:04 AM")
+		return fmt.Sprintf("last executed %s", startStr)
+	}
 	return t.status
 }
 
@@ -130,7 +143,7 @@ func (t *TaskExecutor[T]) ResetDelay() {
 }
 
 func (t *TaskExecutor[T]) Reset() {
-	t.status = "Idle"
+	t.status = ""
 	t.inProgress.Store(false)
 }
 

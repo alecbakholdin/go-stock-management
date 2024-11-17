@@ -19,8 +19,16 @@ func TestResetTask(t *testing.T) {
 	task.Reset()
 
 	assert.Equal(t, "title", task.title)
-	assert.Equal(t, "Idle", task.status)
+	assert.Equal(t, "", task.status)
 	assert.Equal(t, false, task.InProgress())
+}
+
+func TestStatusShowsLastRunIfPresent(t *testing.T) {
+	testHistoryTable := &testHistoryTable{
+		latestHistory: &models.TaskHistory{StartTime: time.Date(2024, time.January, 3, 4, 5, 6, 7, loc)},
+	}
+	task := New(testHistoryTable, "title", "/testing", &testEx{})
+	assert.Equal(t, "last executed Jan 3 2024 4:05 AM",task.Status())
 }
 
 func TestExecuteTask(t *testing.T) {
@@ -29,6 +37,7 @@ func TestExecuteTask(t *testing.T) {
 	testExecutor := &testEx{fetch: []inputType{{fieldOne: "one", fieldTwo: "two"}}}
 	task := New(testHistoryTable, "title", "/testing", testExecutor)
 	task.Execute()
+	assert.Equal(t, "fetching data", task.Status())
 	for task.InProgress() {
 		time.Sleep(time.Millisecond)
 	}
@@ -39,9 +48,11 @@ func TestExecuteTask(t *testing.T) {
 	}
 	history := testHistoryTable.savedHistories[0]
 	assert.Greater(t, history.EndTime, history.StartTime)
+	assert.Equal(t, loc, history.StartTime.Location())
+	assert.Equal(t, loc, history.EndTime.Location())
 	assert.Equal(t, "title", history.TaskName)
 	assert.Equal(t, models.TaskHistoryTaskStatusSucceeded, history.TaskStatus)
-	assert.Equal(t, "Saved 1 rows to database", history.Details)
+	assert.Equal(t, "saved 1 rows to database", history.Details)
 }
 
 func TestExecuteTaskFailsFetch(t *testing.T) {
