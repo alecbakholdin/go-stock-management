@@ -14,5 +14,5 @@ CREATE TABLE task_history (
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+DROP TABLE task_history;
 -- +goose StatementEnd
