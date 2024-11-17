@@ -1,6 +1,15 @@
 -- name: ListCompanies :many
 SELECT *
 FROM company;
+-- name: SaveTaskHistory :exec
+INSERT INTO task_history (task_name, task_status, start_time, end_time, details)
+VALUES (?, ?, ?, ?, ?);
+-- name: GetLatestTaskHistory :one
+SELECT *
+FROM task_history
+WHERE task_name = ?
+ORDER BY start_time DESC
+LIMIT 1;
 -- name: SaveZacksDailyRow :exec
 INSERT INTO zacks_daily (
         symbol,

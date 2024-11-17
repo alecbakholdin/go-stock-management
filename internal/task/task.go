@@ -1,7 +1,9 @@
 package task
 
 import (
+	"context"
 	"fmt"
+	"stock-management/internal/models"
 	"stock-management/internal/web"
 	"sync/atomic"
 	"time"
@@ -15,8 +17,13 @@ type Executor[T any] interface {
 	Save([]T) (int, error)
 }
 
+type TaskHistoryTable interface {
+	SaveTaskHistory(context.Context, models.SaveTaskHistoryParams) error
+	GetLatestTaskHistory(ctx context.Context, task_name string) (models.TaskHistory, error)
+}
+
 type Task interface {
-	Execute() 
+	Execute()
 	GetHandler(echo.Context) error
 	PostHandler(echo.Context) error
 	Title() string
@@ -26,6 +33,7 @@ type Task interface {
 }
 
 type TaskExecutor[T any] struct {
+	q          TaskHistoryTable
 	title      string
 	status     string
 	inProgress atomic.Bool
@@ -33,8 +41,9 @@ type TaskExecutor[T any] struct {
 	ex         Executor[T]
 }
 
-func New[T any](title, urlPath string, ex Executor[T]) Task {
+func New[T any](q TaskHistoryTable, title, urlPath string, ex Executor[T]) Task {
 	return &TaskExecutor[T]{
+		q:       q,
 		title:   title,
 		urlPath: urlPath,
 		ex:      ex,
@@ -52,22 +61,39 @@ func (t *TaskExecutor[T]) Execute() {
 }
 
 func (t *TaskExecutor[T]) fetchAndSave() {
+	history := &models.SaveTaskHistoryParams{
+		TaskName:   t.Title(),
+		StartTime:  time.Now(),
+		TaskStatus: models.TaskHistoryTaskStatusFailed,
+	}
 	defer t.ResetDelay()
+	defer t.saveHistory(history)
+
 	data, err := t.ex.Fetch()
 	if err != nil {
-		log.Errorf("Error fetching for %s: %s",t.Title(), err)
-		t.status = "Error fetching from source"
+		t.status = fmt.Sprintf("error fetching from source: %s", err.Error())
+		log.Errorf("During %s - %s", t.Title(), t.status)
 		return
 	}
 
 	t.status = "Saving rows to DB"
-	if n, err := t.ex.Save(data); err != nil {
-		log.Errorf("Error saving to DB for %s: %s", t.Title(), err.Error())
-		t.status = "Error saving to DB"
+	n, err := t.ex.Save(data)
+	if err != nil {
+		t.status = fmt.Sprintf("error saving to database: %s", err.Error())
+		log.Errorf("During %s - %s", t.Title(), t.status)
 		return
-	} else {
-		t.status = fmt.Sprintf("Saved %d rows to database", n)
-		log.Infof("Saved %d rows to database for executor %s", n, t.Title())
+	}
+
+	history.TaskStatus = models.TaskHistoryTaskStatusSucceeded
+	t.status = fmt.Sprintf("Saved %d rows to database", n)
+	log.Infof("%s for task %s", t.status, t.Title())
+}
+
+func (t *TaskExecutor[T]) saveHistory(history *models.SaveTaskHistoryParams) {
+	history.Details = t.status
+	history.EndTime = time.Now()
+	if err := t.q.SaveTaskHistory(context.Background(), *history); err != nil {
+		log.Errorf("Failed to save history for %s: %s", t.Title(), err.Error())
 	}
 }
 

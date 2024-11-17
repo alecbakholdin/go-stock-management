@@ -65,9 +65,9 @@ func initDb(ec EnvConfig) *models.Queries {
 }
 
 func initAndScheduleTasks(ec EnvConfig, q *models.Queries) []task.Task {
-	zacksDailyTask := task.New("Zacks Daily", "/zacksdaily", zacks.NewDaily(q, ec.ZacksUrl, ec.ZacksDailyFormValue))
-	zacksGrowthTask := task.New("Zacks Growth", "/zacksgrowth", zacks.NewGrowth(q, ec.ZacksUrl, ec.ZacksGrowthFormValue))
-	yahooInsightsTask := task.New("Yahoo Insights", "/yahooinsights", yahoo.NewInsights(q, ec.YahooUrl))
+	zacksDailyTask := task.New(q, "Zacks Daily", "/zacksdaily", zacks.NewDaily(q, ec.ZacksUrl, ec.ZacksDailyFormValue))
+	zacksGrowthTask := task.New(q, "Zacks Growth", "/zacksgrowth", zacks.NewGrowth(q, ec.ZacksUrl, ec.ZacksGrowthFormValue))
+	yahooInsightsTask := task.New(q, "Yahoo Insights", "/yahooinsights", yahoo.NewInsights(q, ec.YahooUrl))
 
 	tasks := []task.Task{zacksDailyTask, zacksGrowthTask, yahooInsightsTask}
 

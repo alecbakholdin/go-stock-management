@@ -8,7 +8,30 @@ package models
 import (
 	"context"
 	"database/sql"
+	"time"
 )
+
+const getLatestTaskHistory = `-- name: GetLatestTaskHistory :one
+SELECT id, task_name, task_status, start_time, end_time, details
+FROM task_history
+WHERE task_name = ?
+ORDER BY start_time DESC
+LIMIT 1
+`
+
+func (q *Queries) GetLatestTaskHistory(ctx context.Context, taskName string) (TaskHistory, error) {
+	row := q.db.QueryRowContext(ctx, getLatestTaskHistory, taskName)
+	var i TaskHistory
+	err := row.Scan(
+		&i.ID,
+		&i.TaskName,
+		&i.TaskStatus,
+		&i.StartTime,
+		&i.EndTime,
+		&i.Details,
+	)
+	return i, err
+}
 
 const listCompanies = `-- name: ListCompanies :many
 SELECT symbol
@@ -36,6 +59,30 @@ func (q *Queries) ListCompanies(ctx context.Context) ([]string, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const saveTaskHistory = `-- name: SaveTaskHistory :exec
+INSERT INTO task_history (task_name, task_status, start_time, end_time, details)
+VALUES (?, ?, ?, ?, ?)
+`
+
+type SaveTaskHistoryParams struct {
+	TaskName   string
+	TaskStatus TaskHistoryTaskStatus
+	StartTime  time.Time
+	EndTime    time.Time
+	Details    string
+}
+
+func (q *Queries) SaveTaskHistory(ctx context.Context, arg SaveTaskHistoryParams) error {
+	_, err := q.db.ExecContext(ctx, saveTaskHistory,
+		arg.TaskName,
+		arg.TaskStatus,
+		arg.StartTime,
+		arg.EndTime,
+		arg.Details,
+	)
+	return err
 }
 
 const saveYahooInsightsRow = `-- name: SaveYahooInsightsRow :exec
