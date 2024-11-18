@@ -47,6 +47,7 @@ func (f *yahooExecutor) Fetch() ([]yahooJsonRow, error) {
 	values := urlPrefix.Query()
 	values.Add("symbols", strings.Join(companies, ","))
 	urlPrefix.RawQuery = values.Encode()
+	log.Info(urlPrefix)
 	
 	jsonResponse := yahooJsonResponse{}
 	if res, err := http.Get(urlPrefix.String()); err != nil {
