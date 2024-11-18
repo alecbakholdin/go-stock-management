@@ -2,7 +2,13 @@
 SELECT *
 FROM company;
 -- name: SaveTaskHistory :exec
-INSERT INTO task_history (task_name, task_status, start_time, end_time, details)
+INSERT INTO task_history (
+        task_name,
+        task_status,
+        start_time,
+        end_time,
+        details
+    )
 VALUES (?, ?, ?, ?, ?);
 -- name: GetLatestTaskHistory :one
 SELECT *
@@ -49,5 +55,15 @@ INSERT INTO yahoo_insights (
         long_term,
         estimated_return,
         fair_value
+    )
+VALUES (?, ?, ?, ?, ?, ?);
+-- name: SaveTipranksRow :exec
+INSERT INTO tipranks (
+        symbol,
+        news_sentiment,
+        analyst_consensus,
+        analyst_price_target,
+        best_analyst_consensus,
+        best_analyst_price_target
     )
 VALUES (?, ?, ?, ?, ?, ?);

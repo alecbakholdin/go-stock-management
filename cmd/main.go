@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"stock-management/internal/models"
 	"stock-management/internal/task"
+	"stock-management/internal/task/tipranks"
 	"stock-management/internal/task/yahoo"
 	"stock-management/internal/task/zacks"
 	"stock-management/internal/util/must"
@@ -34,6 +35,8 @@ type EnvConfig struct {
 	ZacksGrowthFormValue string `env:"ZACKS_GROWTH_FORM_VALUE,required"`
 
 	YahooUrl string `env:"YAHOO_URL_PREFIX,required"`
+
+	TipRanksUrl string `env:"TIPRANKS_URL_PREFIX,required"`
 }
 
 func main() {
@@ -74,8 +77,9 @@ func initAndScheduleTasks(ec EnvConfig, q *models.Queries) []task.Task {
 	zacksDailyTask := task.New(q, "Zacks Daily", "/zacksdaily", zacks.NewDaily(q, ec.ZacksUrl, ec.ZacksDailyFormValue))
 	zacksGrowthTask := task.New(q, "Zacks Growth", "/zacksgrowth", zacks.NewGrowth(q, ec.ZacksUrl, ec.ZacksGrowthFormValue))
 	yahooInsightsTask := task.New(q, "Yahoo Insights", "/yahooinsights", yahoo.NewInsights(q, ec.YahooUrl))
+	tipranksTask := task.New(q, "TipRanks", "/tipranks", tipranks.New(q, ec.TipRanksUrl))
 
-	tasks := []task.Task{zacksDailyTask, zacksGrowthTask, yahooInsightsTask}
+	tasks := []task.Task{zacksDailyTask, zacksGrowthTask, yahooInsightsTask, tipranksTask}
 
 	allTasks := func() {
 		for _, task := range tasks {

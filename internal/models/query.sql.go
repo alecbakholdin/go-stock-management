@@ -62,7 +62,13 @@ func (q *Queries) ListCompanies(ctx context.Context) ([]string, error) {
 }
 
 const saveTaskHistory = `-- name: SaveTaskHistory :exec
-INSERT INTO task_history (task_name, task_status, start_time, end_time, details)
+INSERT INTO task_history (
+        task_name,
+        task_status,
+        start_time,
+        end_time,
+        details
+    )
 VALUES (?, ?, ?, ?, ?)
 `
 
@@ -81,6 +87,39 @@ func (q *Queries) SaveTaskHistory(ctx context.Context, arg SaveTaskHistoryParams
 		arg.StartTime,
 		arg.EndTime,
 		arg.Details,
+	)
+	return err
+}
+
+const saveTipranksRow = `-- name: SaveTipranksRow :exec
+INSERT INTO tipranks (
+        symbol,
+        news_sentiment,
+        analyst_consensus,
+        analyst_price_target,
+        best_analyst_consensus,
+        best_analyst_price_target
+    )
+VALUES (?, ?, ?, ?, ?, ?)
+`
+
+type SaveTipranksRowParams struct {
+	Symbol                 string
+	NewsSentiment          sql.NullInt32
+	AnalystConsensus       sql.NullString
+	AnalystPriceTarget     sql.NullFloat64
+	BestAnalystConsensus   sql.NullString
+	BestAnalystPriceTarget sql.NullFloat64
+}
+
+func (q *Queries) SaveTipranksRow(ctx context.Context, arg SaveTipranksRowParams) error {
+	_, err := q.db.ExecContext(ctx, saveTipranksRow,
+		arg.Symbol,
+		arg.NewsSentiment,
+		arg.AnalystConsensus,
+		arg.AnalystPriceTarget,
+		arg.BestAnalystConsensus,
+		arg.BestAnalystPriceTarget,
 	)
 	return err
 }

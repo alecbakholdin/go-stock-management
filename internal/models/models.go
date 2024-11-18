@@ -66,6 +66,16 @@ type TaskHistory struct {
 	Details    string
 }
 
+type Tiprank struct {
+	Created                time.Time
+	Symbol                 string
+	NewsSentiment          sql.NullInt32
+	AnalystConsensus       sql.NullString
+	AnalystPriceTarget     sql.NullFloat64
+	BestAnalystConsensus   sql.NullString
+	BestAnalystPriceTarget sql.NullFloat64
+}
+
 type YahooInsight struct {
 	Created         time.Time
 	Symbol          string

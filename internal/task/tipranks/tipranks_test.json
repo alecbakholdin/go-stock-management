@@ -1,0 +1,193 @@
+{
+  "data": [
+    {
+      "ticker": "AAPL",
+      "stockType": "stock",
+      "stockTypeId": 1,
+      "sectorId": "technology",
+      "analystConsensus": {
+        "consensus": "buy",
+        "rawConsensus": 4,
+        "distribution": {
+          "buy": 24,
+          "hold": 8,
+          "sell": 2
+        }
+      },
+      "bestAnalystConsensus": {
+        "consensus": "sell",
+        "rawConsensus": 4,
+        "distribution": {
+          "buy": 21,
+          "hold": 6,
+          "sell": 2
+        }
+      },
+      "nextDividendDate": null,
+      "lastReportedEps": {
+        "date": "2024-10-31T00:00:00",
+        "company": "Apple",
+        "ticker": "AAPL",
+        "periodEnding": "Sep 2024",
+        "eps": 1.6,
+        "reportedEPS": 0.97,
+        "lastEps": 1.46,
+        "consensus": null,
+        "bpConsensus": null,
+        "ratingsAndPT": {
+          "priceTarget": null,
+          "numBuys": null,
+          "numHolds": null,
+          "numSells": null
+        },
+        "bpRatingsAndPT": {
+          "priceTarget": null,
+          "numBuys": null,
+          "numHolds": null,
+          "numSells": null
+        },
+        "marketCap": 3401060229492,
+        "marketCapCurrencyId": 1,
+        "stockListingMarketCap": null,
+        "stockListingmarketCapCurrencyId": null,
+        "stockListingMarketCapUSD": null,
+        "stockListingISOMIC": null,
+        "stockListingIsPrimaryMarket": null,
+        "stockListingFollowers": null,
+        "sector": 17349,
+        "stockId": 7624,
+        "stockTypeId": 1,
+        "surprise": 0.649484536082474,
+        "timeOfDay": 1,
+        "isConfirmed": true,
+        "currencyTypeID": 1,
+        "epsCurrencyTypeID": 1,
+        "fiscalPeriod": 4,
+        "fiscalYear": 2024,
+        "fiscalQuarterEndingDate": "2024-09-30T00:00:00",
+        "totalIncome": 14736000000,
+        "totalRevenue": 94930000000,
+        "revenueIncomeCurrencyID": 1,
+        "urlReport": "https://www.apple.com/newsroom/2024/10/apple-reports-fourth-quarter-results/",
+        "lowEstimate": null,
+        "highEstimate": null,
+        "salesEstimate": 94511953000,
+        "salesLowEstimate": null,
+        "salesHighEstimate": null,
+        "smartScore": null,
+        "externalAudioUrl": null,
+        "externalReportUrl": null,
+        "externalPdfUrl": null,
+        "externalImageUrl": null
+      },
+      "nextEarningsReport": {
+        "date": "2025-01-30T00:00:00",
+        "company": "Apple",
+        "ticker": "AAPL",
+        "periodEnding": "Dec 2024",
+        "eps": 2.36,
+        "reportedEPS": null,
+        "lastEps": 2.18,
+        "consensus": null,
+        "bpConsensus": null,
+        "ratingsAndPT": {
+          "priceTarget": null,
+          "numBuys": null,
+          "numHolds": null,
+          "numSells": null
+        },
+        "bpRatingsAndPT": {
+          "priceTarget": null,
+          "numBuys": null,
+          "numHolds": null,
+          "numSells": null
+        },
+        "marketCap": 3401060229492,
+        "marketCapCurrencyId": 1,
+        "stockListingMarketCap": null,
+        "stockListingmarketCapCurrencyId": null,
+        "stockListingMarketCapUSD": null,
+        "stockListingISOMIC": null,
+        "stockListingIsPrimaryMarket": null,
+        "stockListingFollowers": null,
+        "sector": 17349,
+        "stockId": 7624,
+        "stockTypeId": 1,
+        "surprise": null,
+        "timeOfDay": 4,
+        "isConfirmed": false,
+        "currencyTypeID": 1,
+        "epsCurrencyTypeID": 1,
+        "fiscalPeriod": 1,
+        "fiscalYear": 2025,
+        "fiscalQuarterEndingDate": "2024-12-31T00:00:00",
+        "totalIncome": null,
+        "totalRevenue": null,
+        "revenueIncomeCurrencyID": 1,
+        "urlReport": null,
+        "lowEstimate": null,
+        "highEstimate": null,
+        "salesEstimate": 125235664000,
+        "salesLowEstimate": null,
+        "salesHighEstimate": null,
+        "smartScore": null,
+        "externalAudioUrl": null,
+        "externalReportUrl": null,
+        "externalPdfUrl": null,
+        "externalImageUrl": null
+      },
+      "stockUid": "32c36ad3",
+      "companyName": "Apple",
+      "priceTarget": 245.35,
+      "bestPriceTarget": 246.22,
+      "dividend": 0.25,
+      "dividendYield": 0.00435,
+      "peRatio": 36.984,
+      "stockId": 7624,
+      "high52Weeks": 237.49,
+      "low52Weeks": 164.075,
+      "hedgeFundSentimentData": {
+        "rating": 3,
+        "score": 0.0133
+      },
+      "insiderSentimentData": {
+        "rating": 3,
+        "stockScore": 0.2916
+      },
+      "bloggerSentimentData": {
+        "ratingIfExists": 1,
+        "rating": 1,
+        "bearishCount": 41,
+        "bullishCount": 161
+      },
+      "shouldAddLinkToStockPage": true,
+      "expenseRatio": null,
+      "marketCap": 3401060229492,
+      "marketCapCurrencyId": 1,
+      "newsSentiment": 5,
+      "landmarkPrices": {
+        "yearToDate": {
+          "date": "2024-01-01T00:00:00",
+          "d": "1/1/24",
+          "p": 191.59
+        },
+        "threeMonthsAgo": {
+          "date": "2024-08-19T00:00:00",
+          "d": "19/8/24",
+          "p": 225.64
+        },
+        "yearAgo": {
+          "date": "2023-11-17T00:00:00",
+          "d": "17/11/23",
+          "p": 188.76
+        }
+      },
+      "priceTargetCurrencyId": 1,
+      "marketCountryId": 1,
+      "companyFullName": "Apple"
+    },
+    {
+        "ticker": "RANDOM"
+    }
+  ]
+}
