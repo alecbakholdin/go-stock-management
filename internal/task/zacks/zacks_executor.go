@@ -6,12 +6,13 @@ import (
 	"net/url"
 	"stock-management/internal/util/csv"
 	"strconv"
+	"time"
 
 	"github.com/labstack/gommon/log"
 )
 
 type rowSaver[T any] interface {
-	save(T) error
+	save(time.Time, T) error
 }
 
 type zacksExecutor[T interface{Key() string}] struct {
@@ -36,9 +37,10 @@ func (z *zacksExecutor[TCsv]) Fetch() ([]TCsv, error) {
 }
 
 func (z *zacksExecutor[TCsv]) Save(rows []TCsv) (int, error) {
+	created := time.Now()
 	num := 0
 	for i, row := range rows {
-		if err := z.ms.save(row); err != nil {
+		if err := z.ms.save(created, row); err != nil {
 			log.Warnf("Zacks %s: error saving row %d for sticker %s: %s", z.tableName, i, row.Key(), err.Error())
 			log.Warn("Error saving Zacks ", z.tableName, " row for ", i, ": ", err)
 		} else {

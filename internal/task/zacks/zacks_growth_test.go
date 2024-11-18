@@ -38,38 +38,43 @@ func TestZacksGrowth(t *testing.T) {
 	if !assert.NoError(t, err) {
 		return
 	}
-	expectedSqlRows := []models.SaveZacksGrowthRowParams {
+	expectedSqlRows := []models.SaveZacksGrowthRowParams{
 		{
-			Symbol: "AA",
-			Company: sql.NullString{String: "Alcoa", Valid: true},
-			Price: 44.02,
-			GrowthScore: sql.NullString{String: "B", Valid: true},
-			YearOverYearQ0Growth: 150,
-			LongTermGrowthPercent: 58.86,
-			LastFinancialYearActual: -2.27,
-			ThisFinancialYearEst: 0.89,
-			NextFinanicalYearEst: 2.98,
-			Q1Est: 0.77,
+			Symbol:                             "AA",
+			Company:                            sql.NullString{String: "Alcoa", Valid: true},
+			Price:                              44.02,
+			GrowthScore:                        sql.NullString{String: "B", Valid: true},
+			YearOverYearQ0Growth:               150,
+			LongTermGrowthPercent:              58.86,
+			LastFinancialYearActual:            -2.27,
+			ThisFinancialYearEst:               0.89,
+			NextFinanicalYearEst:               2.98,
+			Q1Est:                              0.77,
 			EarningsExpectedSurprisePrediction: 1.13,
-			NextReportDate: sql.NullTime{Time: mustParseDate("1/15/25"), Valid: true},
+			NextReportDate:                     sql.NullTime{Time: mustParseDate("1/15/25"), Valid: true},
 		},
 		{
-			Symbol: "BBBYQ",
-			Company: sql.NullString{String: "Bed Bath & Beyond", Valid: true},
-			Price: 0,
-			GrowthScore: sql.NullString{},
-			YearOverYearQ0Growth: 0,
-			LongTermGrowthPercent: 0,
-			LastFinancialYearActual: -0.98,
-			ThisFinancialYearEst: 0,
-			NextFinanicalYearEst: 0,
-			Q1Est: 0,
+			Symbol:                             "BBBYQ",
+			Company:                            sql.NullString{String: "Bed Bath & Beyond", Valid: true},
+			Price:                              0,
+			GrowthScore:                        sql.NullString{},
+			YearOverYearQ0Growth:               0,
+			LongTermGrowthPercent:              0,
+			LastFinancialYearActual:            -0.98,
+			ThisFinancialYearEst:               0,
+			NextFinanicalYearEst:               0,
+			Q1Est:                              0,
 			EarningsExpectedSurprisePrediction: 0,
-			NextReportDate: sql.NullTime{},
+			NextReportDate:                     sql.NullTime{},
 		},
 	}
 	assert.Equal(t, 2, n)
 	assert.Equal(t, 2, len(growthSaver.saved))
+	assert.NotZero(t, growthSaver.saved[0].Created)
+	assert.NotZero(t, growthSaver.saved[1].Created)
+	assert.Equal(t, growthSaver.saved[0], growthSaver.saved[1])
+	expectedSqlRows[0].Created = growthSaver.saved[0].Created
+	expectedSqlRows[1].Created = growthSaver.saved[1].Created
 	assert.EqualValues(t, expectedSqlRows[0], growthSaver.saved[0])
 	assert.EqualValues(t, expectedSqlRows[1], growthSaver.saved[1])
 }

@@ -93,6 +93,7 @@ func (q *Queries) SaveTaskHistory(ctx context.Context, arg SaveTaskHistoryParams
 
 const saveTipranksRow = `-- name: SaveTipranksRow :exec
 INSERT INTO tipranks (
+        created,
         symbol,
         news_sentiment,
         analyst_consensus,
@@ -100,10 +101,11 @@ INSERT INTO tipranks (
         best_analyst_consensus,
         best_analyst_price_target
     )
-VALUES (?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?)
 `
 
 type SaveTipranksRowParams struct {
+	Created                time.Time
 	Symbol                 string
 	NewsSentiment          sql.NullInt32
 	AnalystConsensus       sql.NullString
@@ -114,6 +116,7 @@ type SaveTipranksRowParams struct {
 
 func (q *Queries) SaveTipranksRow(ctx context.Context, arg SaveTipranksRowParams) error {
 	_, err := q.db.ExecContext(ctx, saveTipranksRow,
+		arg.Created,
 		arg.Symbol,
 		arg.NewsSentiment,
 		arg.AnalystConsensus,
@@ -126,6 +129,7 @@ func (q *Queries) SaveTipranksRow(ctx context.Context, arg SaveTipranksRowParams
 
 const saveYahooInsightsRow = `-- name: SaveYahooInsightsRow :exec
 INSERT INTO yahoo_insights (
+        created,
         symbol,
         company_name,
         short_term,
@@ -134,10 +138,11 @@ INSERT INTO yahoo_insights (
         estimated_return,
         fair_value
     )
-VALUES (?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type SaveYahooInsightsRowParams struct {
+	Created         time.Time
 	Symbol          string
 	CompanyName     sql.NullString
 	ShortTerm       sql.NullString
@@ -149,6 +154,7 @@ type SaveYahooInsightsRowParams struct {
 
 func (q *Queries) SaveYahooInsightsRow(ctx context.Context, arg SaveYahooInsightsRowParams) error {
 	_, err := q.db.ExecContext(ctx, saveYahooInsightsRow,
+		arg.Created,
 		arg.Symbol,
 		arg.CompanyName,
 		arg.ShortTerm,
@@ -162,6 +168,7 @@ func (q *Queries) SaveYahooInsightsRow(ctx context.Context, arg SaveYahooInsight
 
 const saveZacksDailyRow = `-- name: SaveZacksDailyRow :exec
 INSERT INTO zacks_daily (
+        created,
         symbol,
         company,
         price,
@@ -174,10 +181,11 @@ INSERT INTO zacks_daily (
         momentum_score,
         vgm_score
     )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type SaveZacksDailyRowParams struct {
+	Created       time.Time
 	Symbol        string
 	Company       sql.NullString
 	Price         float64
@@ -193,6 +201,7 @@ type SaveZacksDailyRowParams struct {
 
 func (q *Queries) SaveZacksDailyRow(ctx context.Context, arg SaveZacksDailyRowParams) error {
 	_, err := q.db.ExecContext(ctx, saveZacksDailyRow,
+		arg.Created,
 		arg.Symbol,
 		arg.Company,
 		arg.Price,
@@ -210,6 +219,7 @@ func (q *Queries) SaveZacksDailyRow(ctx context.Context, arg SaveZacksDailyRowPa
 
 const saveZacksGrowthRow = `-- name: SaveZacksGrowthRow :exec
 INSERT INTO zacks_growth (
+        created,
         symbol,
         company,
         price,
@@ -223,10 +233,11 @@ INSERT INTO zacks_growth (
         earnings_expected_surprise_prediction,
         next_report_date
     )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type SaveZacksGrowthRowParams struct {
+	Created                            time.Time
 	Symbol                             string
 	Company                            sql.NullString
 	Price                              float64
@@ -243,6 +254,7 @@ type SaveZacksGrowthRowParams struct {
 
 func (q *Queries) SaveZacksGrowthRow(ctx context.Context, arg SaveZacksGrowthRowParams) error {
 	_, err := q.db.ExecContext(ctx, saveZacksGrowthRow,
+		arg.Created,
 		arg.Symbol,
 		arg.Company,
 		arg.Price,

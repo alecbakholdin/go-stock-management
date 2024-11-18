@@ -18,6 +18,7 @@ ORDER BY start_time DESC
 LIMIT 1;
 -- name: SaveZacksDailyRow :exec
 INSERT INTO zacks_daily (
+        created,
         symbol,
         company,
         price,
@@ -30,9 +31,10 @@ INSERT INTO zacks_daily (
         momentum_score,
         vgm_score
     )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 -- name: SaveZacksGrowthRow :exec
 INSERT INTO zacks_growth (
+        created,
         symbol,
         company,
         price,
@@ -46,9 +48,10 @@ INSERT INTO zacks_growth (
         earnings_expected_surprise_prediction,
         next_report_date
     )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 -- name: SaveYahooInsightsRow :exec
 INSERT INTO yahoo_insights (
+        created,
         symbol,
         company_name,
         short_term,
@@ -57,9 +60,10 @@ INSERT INTO yahoo_insights (
         estimated_return,
         fair_value
     )
-VALUES (?, ?, ?, ?, ?, ?, ?);
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 -- name: SaveTipranksRow :exec
 INSERT INTO tipranks (
+        created,
         symbol,
         news_sentiment,
         analyst_consensus,
@@ -67,4 +71,4 @@ INSERT INTO tipranks (
         best_analyst_consensus,
         best_analyst_price_target
     )
-VALUES (?, ?, ?, ?, ?, ?);
+VALUES (?, ?, ?, ?, ?, ?, ?);

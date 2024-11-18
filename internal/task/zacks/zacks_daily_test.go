@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"stock-management/internal/models"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -68,6 +69,11 @@ func TestZacksDaily(t *testing.T) {
 	}
 	assert.Equal(t, 2, len(s.savedRows))
 	assert.Equal(t, 2, n)
+	assert.NotZero(t, s.savedRows[0].Created)
+	assert.NotZero(t, s.savedRows[1].Created)
+	assert.Equal(t, s.savedRows[0], s.savedRows[1])
+	expectedSave[0].Created = s.savedRows[0].Created
+	expectedSave[1].Created = s.savedRows[1].Created
 	assert.Equal(t, expectedSave[0], s.savedRows[0])
 	assert.Equal(t, expectedSave[1], s.savedRows[1])
 }
@@ -78,5 +84,6 @@ type zacksDailySaver struct {
 
 func (s *zacksDailySaver) SaveZacksDailyRow(ctx context.Context, arg models.SaveZacksDailyRowParams) (error) {
 	s.savedRows = append(s.savedRows, arg)
+	time.Sleep(time.Millisecond)
 	return nil
 }

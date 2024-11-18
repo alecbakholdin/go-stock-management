@@ -25,13 +25,14 @@ func NewGrowth(q ZacksGrowthRowSaver, url, formValue string) *zacksExecutor[zack
 	}
 }
 
-func (g *zacksGrowth) save(csvRow zacksGrowthCsvRow) error {
+func (g *zacksGrowth) save(created time.Time, csvRow zacksGrowthCsvRow) error {
 	nextReportDate, err := time.Parse("1/2/06", csvRow.NextReportDate)
 	if err != nil {
 		log.Warn("Error parsing time string ", csvRow.NextReportDate, " during Zacks Growth task: ", err)
 	}
 
 	sqlRow := models.SaveZacksGrowthRowParams{
+		Created:                            created,
 		Symbol:                             csvRow.Symbol,
 		Company:                            models.NullStringIfMatch(csvRow.Company, "NA"),
 		Price:                              csvRow.Price,
