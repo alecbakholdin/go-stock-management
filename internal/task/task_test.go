@@ -25,10 +25,10 @@ func TestResetTask(t *testing.T) {
 
 func TestStatusShowsLastRunIfPresent(t *testing.T) {
 	testHistoryTable := &testHistoryTable{
-		latestHistory: &models.TaskHistory{StartTime: time.Date(2024, time.January, 3, 4, 5, 6, 7, loc)},
+		latestHistory: &models.TaskHistory{StartTime: time.Date(2024, time.January, 3, 16, 5, 6, 7, loc)},
 	}
 	task := New(testHistoryTable, "title", "/testing", &testEx{})
-	assert.Equal(t, "last executed Jan 3, 2024 4:05 AM",task.Status())
+	assert.Equal(t, "last executed Jan 3, 2024 4:05 PM",task.Status())
 }
 
 func TestExecuteTask(t *testing.T) {

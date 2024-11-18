@@ -125,7 +125,7 @@ func (t *TaskExecutor[T]) Status() string {
 	if history, err := t.q.GetLatestTaskHistory(context.Background(), t.Title()); err != nil && !errors.Is(err, sql.ErrNoRows){
 		log.Errorf("During %s - error getting latest task history: %s", t.Title(), err.Error())
 	} else if err == nil {
-		startStr := history.StartTime.Format("Jan 2, 2006 3:04 AM")
+		startStr := history.StartTime.In(loc).Format("Jan 2, 2006 3:04 PM")
 		return fmt.Sprintf("last executed %s", startStr)
 	}
 	return t.status
