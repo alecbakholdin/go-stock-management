@@ -100,8 +100,12 @@ func initAndScheduleTasks(ec EnvConfig, q *models.Queries) []task.Task {
 	}
 
 	c := cron.New(cron.WithLocation(must.MustLoadLocation("America/New_York")))
-	c.AddFunc("0 0 10,14 * * * MON-FRI", allTasks)
-	c.AddFunc("0 30 16 * * * MON-FRI", allTasks)
+	if _, err := c.AddFunc("0 10,14 * * MON-FRI", allTasks); err != nil {
+		log.Fatalf("Error adding cron job 1: %s", err.Error())
+	} else if _, err := c.AddFunc("30 16 * * MON-FRI", allTasks); err != nil {
+
+		log.Fatalf("Error adding cron job 2: %s", err.Error())
+	}
 	c.Start()
 
 	return tasks
