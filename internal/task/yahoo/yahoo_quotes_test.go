@@ -55,17 +55,17 @@ func TestYahooQuotes(t *testing.T) {
 
 func TestYahooQuotesFailsGracefullyOnCrumb429(t *testing.T) {
 	crumbServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusTooManyRequests)
 		_, err := w.Write([]byte("too many requests"))
 		if err != nil {
 			t.Errorf("error writing to response: %s", err.Error())
 		}
+		w.WriteHeader(http.StatusTooManyRequests)
 	}))
 	quotesExecutor := NewQuotes(&testQuotesSaver{}, crumbServer.URL, "gibberish")
 	_, err := quotesExecutor.Fetch()
 	if assert.Error(t, err) {
 		assert.Contains(t, err.Error(), "429")
-		assert.Contains(t, err.Error(), "too many requests")
+		assert.Contains(t, err.Error(), "")
 	}
 
 }

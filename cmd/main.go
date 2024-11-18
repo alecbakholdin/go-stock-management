@@ -91,7 +91,7 @@ func initAndScheduleTasks(ec EnvConfig, q *models.Queries) []task.Task {
 	tipranksTask := task.New(q, "TipRanks", "/tipranks", tipranks.New(q, ec.TipRanksUrl))
 	yahooQuotesTask := task.New(q, "Yahoo Quotes", "/yahooquotes", yahoo.NewQuotes(q, ec.YahooQuotesCrumbUrl, ec.YahooQuotesUrl))
 
-	tasks := []task.Task{zacksDailyTask, zacksGrowthTask, yahooInsightsTask, tipranksTask, yahooQuotesTask}
+	tasks := []task.Task{zacksDailyTask, zacksGrowthTask, yahooInsightsTask, yahooQuotesTask, tipranksTask}
 
 	allTasks := func() {
 		for _, task := range tasks {
