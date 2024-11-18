@@ -20,7 +20,7 @@ func TestYahoo(t *testing.T) {
 			http.ServeFile(w, r, "./yahoo_insights_test.json")
 		}
 	}))
-	url := server.URL + "?symbols="
+	url := server.URL
 
 	yahooSaver := &yahooSaver{}
 	yahooExecutor := NewInsights(yahooSaver, url)

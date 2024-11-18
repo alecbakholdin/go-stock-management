@@ -5,8 +5,10 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"stock-management/internal/models"
 	"strconv"
 	"strings"
@@ -38,42 +40,24 @@ func (f *yahooExecutor) Fetch() ([]yahooJsonRow, error) {
 		return nil, errors.Join(errors.New("error listing companies"), err)
 	}
 
-	rows := []yahooJsonRow{}
-	batchSize := 10
-	for i := range len(companies)/batchSize + 1 {
-		start := i * batchSize
-		end := (i + 1) * batchSize
-		if end > len(companies) {
-			end = len(companies)
-		}
-		if batch, err := f.getRowBatch(companies[start:end]); err != nil {
-			return nil, err
-		} else {
-			rows = append(rows, batch...)
-		}
+	urlPrefix, err := url.Parse(f.urlPrefix)
+	if err != nil {
+		return nil, errors.Join(errors.New("error parsing yahoo insights url prefix"), err)
 	}
-
-	return rows, nil
-}
-
-func (y *yahooExecutor) getRowBatch(batch []string) ([]yahooJsonRow, error) {
-	url := y.urlPrefix
-	for i, symbol := range batch {
-		if i > 0 {
-			url += ","
-		}
-		url += strings.ToUpper(symbol)
-	}
-
+	values := urlPrefix.Query()
+	values.Add("symbols", strings.Join(companies, ","))
+	urlPrefix.RawQuery = values.Encode()
+	
 	jsonResponse := yahooJsonResponse{}
-	if res, err := http.Get(url); err != nil {
-		return nil, errors.Join(errors.New("error fetching companies from yahoo"), err)
+	if res, err := http.Get(urlPrefix.String()); err != nil {
+		return nil, errors.Join(errors.New("error making get request to yahoo insights"), err)
+	} else if res.StatusCode != http.StatusOK {
+		return nil, errors.Join(fmt.Errorf("http error %d on yahoo insights request", res.StatusCode))
 	} else if bytes, err := io.ReadAll(res.Body); err != nil {
 		return nil, errors.Join(errors.New("error reading from response body"), err)
 	} else if err := json.Unmarshal(bytes, &jsonResponse); err != nil {
 		return nil, errors.Join(errors.New("error unmarshaling response body"), err)
 	}
-
 	return jsonResponse.Finance.Result, nil
 }
 

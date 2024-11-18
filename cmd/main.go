@@ -38,7 +38,7 @@ type EnvConfig struct {
 	ZacksDailyFormValue  string `env:"ZACKS_DAILY_FORM_VALUE,required"`
 	ZacksGrowthFormValue string `env:"ZACKS_GROWTH_FORM_VALUE,required"`
 
-	YahooInsightsUrl    string `env:"YAHOO_URL_PREFIX,required"`
+	YahooInsightsUrl    string `env:"YAHOO_INSIGHTS_URL_PREFIX,required"`
 	YahooQuotesCrumbUrl string `env:"YAHOO_QUOTES_GET_CRUMB_URL,required"`
 	YahooQuotesUrl      string `env:"YAHOO_QUOTES_URL_PREFIX,required"`
 
