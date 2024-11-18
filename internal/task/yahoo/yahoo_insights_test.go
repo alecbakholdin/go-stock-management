@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"stock-management/internal/models"
+	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -26,7 +28,7 @@ func TestYahoo(t *testing.T) {
 	yahooExecutor := NewInsights(yahooSaver, url)
 
 	jsonRows, err := yahooExecutor.Fetch()
-	if !assert.NoError(t, err) {
+	if !assert.NoError(t, err) || !assert.Equal(t, 2, len(jsonRows)) {
 		t.FailNow()
 	}
 
@@ -34,7 +36,7 @@ func TestYahoo(t *testing.T) {
 		{"AAPL", yahooJsonInstrumentInfo{yahooJsonTechnicalEvents{yahooJsonOutlook{"Bullish"}, yahooJsonOutlook{"Bearish"}, yahooJsonOutlook{"Neutral"}}, yahooJsonValuation{"Overvalued", "-6%"}}, yahooJsonUpsell{"Apple Inc."}},
 		{"MSFT", yahooJsonInstrumentInfo{yahooJsonTechnicalEvents{yahooJsonOutlook{"Bullish"}, yahooJsonOutlook{"Bullish"}, yahooJsonOutlook{"Bullish"}}, yahooJsonValuation{"Overvalued", "-1%"}}, yahooJsonUpsell{"Microsoft Corporation"}},
 	}
-	assert.Equal(t, len(expectedJsonRows), len(jsonRows))
+
 	assert.EqualValues(t, expectedJsonRows[0], jsonRows[0])
 	assert.EqualValues(t, expectedJsonRows[1], jsonRows[1])
 
@@ -72,11 +74,52 @@ func TestYahoo(t *testing.T) {
 	assert.Equal(t, expectedSqlRows[1], yahooSaver.written[1])
 }
 
+func TestYahooInsightsSplitsIntoBatchesOf25(t *testing.T) {
+	num := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		symbols := r.URL.Query().Get("symbols")
+		assert.LessOrEqual(t, len(strings.Split(symbols, ",")), 25)
+		num += 1
+		http.ServeFile(w, r, "./yahoo_insights_test.json")
+	}))
+	companies := []string{}
+	for i := range 30 {
+		companies = append(companies, strconv.Itoa(i))
+	}
+	_, err := NewInsights(&yahooSaver{companies: companies}, server.URL).Fetch()
+	if assert.NoError(t, err) {
+		assert.Equal(t, 2, num)
+	}
+}
+
+func TestYahooInsightsDoesntRunEmptyBatches(t * testing.T) {
+	num := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		symbols := strings.Split(r.URL.Query().Get("symbols"), ",")
+		assert.LessOrEqual(t, len(symbols), 25)
+		assert.NotContains(t, symbols, "")
+		num += 1
+		http.ServeFile(w, r, "./yahoo_insights_test.json")
+	}))
+	companies := []string{}
+	for i := range 25 {
+		companies = append(companies, strconv.Itoa(i))
+	}
+	_, err := NewInsights(&yahooSaver{companies: companies}, server.URL).Fetch()
+	if assert.NoError(t, err) {
+		assert.Equal(t, 1, num)
+	}
+}
+
 type yahooSaver struct {
-	written []models.SaveYahooInsightsRowParams
+	companies []string
+	written   []models.SaveYahooInsightsRowParams
 }
 
 func (y *yahooSaver) ListCompanies(ctx context.Context) ([]string, error) {
+	if y.companies != nil {
+		return y.companies, nil
+	}
 	return []string{"AAPL", "MSFT"}, nil
 }
 

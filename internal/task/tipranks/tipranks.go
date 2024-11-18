@@ -3,11 +3,9 @@ package tipranks
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
-	"io"
-	"net/http"
 	"stock-management/internal/models"
+	"stock-management/internal/task/httpunmarshal"
 	"strings"
 	"time"
 
@@ -36,17 +34,9 @@ func (t *tipranksExecutor) Fetch() ([]tipranksJsonRow, error) {
 	if err != nil {
 		return nil, errors.Join(errors.New("error fetching companies"), err)
 	}
-	res, err := http.Get(t.url + strings.Join(companies, ","))
-	if err != nil {
-		return nil, errors.Join(errors.New("error fetching from tipranks"), err)
-	}
-	bytes, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, errors.Join(errors.New("error reading from response body"), err)
-	}
 	var jsonObj tipranksJsonResponse
-	if err := json.Unmarshal(bytes, &jsonObj); err != nil {
-		return nil, errors.Join(errors.New("error unmarshaling tipranks json object"), err)
+	if err := httpunmarshal.Get(t.url + strings.Join(companies, ","), &jsonObj); err != nil {
+		return nil, errors.Join(errors.New("error fetching from tipranks"), err)
 	}
 	return jsonObj.Data, nil
 }

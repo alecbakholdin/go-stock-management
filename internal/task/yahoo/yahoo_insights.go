@@ -3,13 +3,11 @@ package yahoo
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
 	"net/url"
 	"stock-management/internal/models"
+	"stock-management/internal/task/httpunmarshal"
 	"strconv"
 	"strings"
 	"time"
@@ -40,6 +38,29 @@ func (f *yahooExecutor) Fetch() ([]yahooJsonRow, error) {
 		return nil, errors.Join(errors.New("error listing companies"), err)
 	}
 
+	jsonRows := []yahooJsonRow{}
+	batchSize := 25
+	for i := range (len(companies) / batchSize) + 1 {
+		batchStart := i * batchSize
+		batchEnd := (i + 1) * batchSize
+		if batchEnd > len(companies) {
+			batchEnd = len(companies)
+		}
+		batch := companies[batchStart:batchEnd]
+
+		if jsonRowBatch, err := f.fetchBatch(batch); err != nil {
+			return nil, errors.Join(fmt.Errorf("error fetching insights for batch %d", i), err)
+		} else {
+			jsonRows = append(jsonRows, jsonRowBatch...)
+		}
+	}
+	return jsonRows, nil
+}
+
+func (f *yahooExecutor) fetchBatch(companies []string) ([]yahooJsonRow, error) {
+	if len(companies) == 0 {
+		return []yahooJsonRow{}, nil
+	}
 	urlPrefix, err := url.Parse(f.urlPrefix)
 	if err != nil {
 		return nil, errors.Join(errors.New("error parsing yahoo insights url prefix"), err)
@@ -47,17 +68,11 @@ func (f *yahooExecutor) Fetch() ([]yahooJsonRow, error) {
 	values := urlPrefix.Query()
 	values.Add("symbols", strings.Join(companies, ","))
 	urlPrefix.RawQuery = values.Encode()
-	log.Info(urlPrefix)
-	
+
+	log.Infof("%s", urlPrefix.String())
 	jsonResponse := yahooJsonResponse{}
-	if res, err := http.Get(urlPrefix.String()); err != nil {
-		return nil, errors.Join(errors.New("error making get request to yahoo insights"), err)
-	} else if res.StatusCode != http.StatusOK {
-		return nil, errors.Join(fmt.Errorf("http error %d on yahoo insights request", res.StatusCode))
-	} else if bytes, err := io.ReadAll(res.Body); err != nil {
-		return nil, errors.Join(errors.New("error reading from response body"), err)
-	} else if err := json.Unmarshal(bytes, &jsonResponse); err != nil {
-		return nil, errors.Join(errors.New("error unmarshaling response body"), err)
+	if err := httpunmarshal.Get(urlPrefix.String(), &jsonResponse); err != nil {
+		return nil, errors.Join(errors.New("error making yahoo insights request"), err)
 	}
 	return jsonResponse.Finance.Result, nil
 }
