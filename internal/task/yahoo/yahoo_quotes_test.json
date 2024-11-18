@@ -1,0 +1,61 @@
+{
+  "quoteResponse": {
+    "result": [
+      {
+        "language": "en-US",
+        "region": "US",
+        "quoteType": "EQUITY",
+        "typeDisp": "Equity",
+        "quoteSourceName": "Nasdaq Real Time Price",
+        "triggerable": true,
+        "customPriceAlertConfidence": "HIGH",
+        "marketState": "REGULAR",
+        "exchange": "NMS",
+        "exchangeTimezoneName": "America/New_York",
+        "exchangeTimezoneShortName": "EST",
+        "gmtOffSetMilliseconds": -18000000,
+        "market": "us_market",
+        "esgPopulated": false,
+        "regularMarketPrice": 228.9501,
+        "hasPrePostMarketData": true,
+        "firstTradeDateMilliseconds": 345479400000,
+        "priceHint": 2,
+        "regularMarketTime": 1731951542,
+        "fullExchangeName": "NasdaqGS",
+        "sourceInterval": 15,
+        "exchangeDataDelayedBy": 0,
+        "tradeable": false,
+        "cryptoTradeable": false,
+        "symbol": "AAPL"
+      },
+      {
+        "language": "en-US",
+        "region": "US",
+        "quoteType": "EQUITY",
+        "typeDisp": "Equity",
+        "quoteSourceName": "Nasdaq Real Time Price",
+        "triggerable": true,
+        "customPriceAlertConfidence": "HIGH",
+        "marketState": "REGULAR",
+        "exchange": "NMS",
+        "exchangeTimezoneName": "America/New_York",
+        "exchangeTimezoneShortName": "EST",
+        "gmtOffSetMilliseconds": -18000000,
+        "market": "us_market",
+        "esgPopulated": false,
+        "regularMarketPrice": 415.53,
+        "hasPrePostMarketData": true,
+        "firstTradeDateMilliseconds": 511108200000,
+        "priceHint": 2,
+        "regularMarketTime": 1731951534,
+        "fullExchangeName": "NasdaqGS",
+        "sourceInterval": 15,
+        "exchangeDataDelayedBy": 0,
+        "tradeable": false,
+        "cryptoTradeable": false,
+        "symbol": "MSFT"
+      }
+    ],
+    "error": null
+  }
+}

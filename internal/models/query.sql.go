@@ -166,6 +166,22 @@ func (q *Queries) SaveYahooInsightsRow(ctx context.Context, arg SaveYahooInsight
 	return err
 }
 
+const saveYahooQuotesRow = `-- name: SaveYahooQuotesRow :exec
+INSERT INTO yahoo_quotes (created, symbol, regular_market_price)
+VALUES (?, ?, ?)
+`
+
+type SaveYahooQuotesRowParams struct {
+	Created            time.Time
+	Symbol             string
+	RegularMarketPrice float64
+}
+
+func (q *Queries) SaveYahooQuotesRow(ctx context.Context, arg SaveYahooQuotesRowParams) error {
+	_, err := q.db.ExecContext(ctx, saveYahooQuotesRow, arg.Created, arg.Symbol, arg.RegularMarketPrice)
+	return err
+}
+
 const saveZacksDailyRow = `-- name: SaveZacksDailyRow :exec
 INSERT INTO zacks_daily (
         created,

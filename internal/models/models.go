@@ -87,6 +87,12 @@ type YahooInsight struct {
 	CompanyName     sql.NullString
 }
 
+type YahooQuote struct {
+	Created            time.Time
+	Symbol             string
+	RegularMarketPrice float64
+}
+
 type ZacksDaily struct {
 	Created       time.Time
 	Symbol        string

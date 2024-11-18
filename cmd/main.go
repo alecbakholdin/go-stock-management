@@ -25,23 +25,24 @@ import (
 )
 
 type EnvConfig struct {
-	Port                  string `env:"PORT"`
+	Port string `env:"PORT"`
 
-	SigningSecret         string `env:"SIGNING_SECRET,required"`
-	AdminUsername         string `env:"ADMIN_USERNAME,required"`
-	AdminPassword         string `env:"ADMIN_PASSWORD,required"`
+	SigningSecret string `env:"SIGNING_SECRET,required"`
+	AdminUsername string `env:"ADMIN_USERNAME,required"`
+	AdminPassword string `env:"ADMIN_PASSWORD,required"`
 
 	MySqlConnectionString string `env:"MYSQL_CONNECTION_STRING,required"`
-	GooseMigrationsDir string `env:"GOOSE_MIGRATIONS_DIR,required"`
+	GooseMigrationsDir    string `env:"GOOSE_MIGRATIONS_DIR,required"`
 
 	ZacksUrl             string `env:"ZACKS_URL,required"`
 	ZacksDailyFormValue  string `env:"ZACKS_DAILY_FORM_VALUE,required"`
 	ZacksGrowthFormValue string `env:"ZACKS_GROWTH_FORM_VALUE,required"`
 
-	YahooUrl string `env:"YAHOO_URL_PREFIX,required"`
+	YahooInsightsUrl    string `env:"YAHOO_URL_PREFIX,required"`
+	YahooQuotesCrumbUrl string `env:"YAHOO_QUOTES_GET_CRUMB_URL,required"`
+	YahooQuotesUrl      string `env:"YAHOO_QUOTES_URL_PREFIX,required"`
 
 	TipRanksUrl string `env:"TIPRANKS_URL_PREFIX,required"`
-
 }
 
 func main() {
@@ -86,10 +87,11 @@ func initDb(ec EnvConfig) *models.Queries {
 func initAndScheduleTasks(ec EnvConfig, q *models.Queries) []task.Task {
 	zacksDailyTask := task.New(q, "Zacks Daily", "/zacksdaily", zacks.NewDaily(q, ec.ZacksUrl, ec.ZacksDailyFormValue))
 	zacksGrowthTask := task.New(q, "Zacks Growth", "/zacksgrowth", zacks.NewGrowth(q, ec.ZacksUrl, ec.ZacksGrowthFormValue))
-	yahooInsightsTask := task.New(q, "Yahoo Insights", "/yahooinsights", yahoo.NewInsights(q, ec.YahooUrl))
+	yahooInsightsTask := task.New(q, "Yahoo Insights", "/yahooinsights", yahoo.NewInsights(q, ec.YahooInsightsUrl))
 	tipranksTask := task.New(q, "TipRanks", "/tipranks", tipranks.New(q, ec.TipRanksUrl))
+	yahooQuotesTask := task.New(q, "Yahoo Quotes", "/yahooquotes", yahoo.NewQuotes(q, ec.YahooQuotesCrumbUrl, ec.YahooQuotesUrl))
 
-	tasks := []task.Task{zacksDailyTask, zacksGrowthTask, yahooInsightsTask, tipranksTask}
+	tasks := []task.Task{zacksDailyTask, zacksGrowthTask, yahooInsightsTask, tipranksTask, yahooQuotesTask}
 
 	allTasks := func() {
 		for _, task := range tasks {
