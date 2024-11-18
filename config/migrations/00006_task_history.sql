@@ -1,7 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE task_history (
-    id CHAR(36) NOT NULL DEFAULT (UUID()),
+    id BIGINT NOT NULL AUTO_INCREMENT, 
     task_name VARCHAR(128) NOT NULL,
     task_status ENUM('Succeeded', 'Failed') NOT NULL,
     start_time TIMESTAMP NOT NULL,
