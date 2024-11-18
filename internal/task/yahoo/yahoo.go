@@ -85,6 +85,7 @@ func (f *yahooExecutor) Save(rows []yahooJsonRow) (int, error) {
 		}
 		sqlRow := models.SaveYahooInsightsRowParams{
 			Symbol:          row.Symbol,
+			CompanyName:     models.NullStringIfZero(row.Upsell.CompanyName),
 			ShortTerm:       models.NullStringIfZero(row.InstrumentInfo.TechnicalEvents.ShortTermOutlook.Direction),
 			MidTerm:         models.NullStringIfZero(row.InstrumentInfo.TechnicalEvents.IntermediateTermOutlook.Direction),
 			LongTerm:        models.NullStringIfZero(row.InstrumentInfo.TechnicalEvents.LongTermOutlook.Direction),
@@ -109,6 +110,11 @@ type yahooJsonResponse struct {
 type yahooJsonRow struct {
 	Symbol         string
 	InstrumentInfo yahooJsonInstrumentInfo
+	Upsell         yahooJsonUpsell
+}
+
+type yahooJsonUpsell struct {
+	CompanyName string
 }
 
 type yahooJsonInstrumentInfo struct {

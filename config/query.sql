@@ -50,13 +50,14 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 -- name: SaveYahooInsightsRow :exec
 INSERT INTO yahoo_insights (
         symbol,
+        company_name,
         short_term,
         mid_term,
         long_term,
         estimated_return,
         fair_value
     )
-VALUES (?, ?, ?, ?, ?, ?);
+VALUES (?, ?, ?, ?, ?, ?, ?);
 -- name: SaveTipranksRow :exec
 INSERT INTO tipranks (
         symbol,

@@ -41,8 +41,8 @@ func TestYahoo(t *testing.T) {
 	}
 
 	expectedJsonRows := []yahooJsonRow{
-		{"AAPL", yahooJsonInstrumentInfo{yahooJsonTechnicalEvents{yahooJsonOutlook{"Bullish"}, yahooJsonOutlook{"Bearish"}, yahooJsonOutlook{"Neutral"}}, yahooJsonValuation{"Overvalued", "-6%"}}},
-		{"MSFT", yahooJsonInstrumentInfo{yahooJsonTechnicalEvents{yahooJsonOutlook{"Bullish"}, yahooJsonOutlook{"Bullish"}, yahooJsonOutlook{"Bullish"}}, yahooJsonValuation{"Overvalued", "-1%"}}},
+		{"AAPL", yahooJsonInstrumentInfo{yahooJsonTechnicalEvents{yahooJsonOutlook{"Bullish"}, yahooJsonOutlook{"Bearish"}, yahooJsonOutlook{"Neutral"}}, yahooJsonValuation{"Overvalued", "-6%"}}, yahooJsonUpsell{"Apple Inc."}},
+		{"MSFT", yahooJsonInstrumentInfo{yahooJsonTechnicalEvents{yahooJsonOutlook{"Bullish"}, yahooJsonOutlook{"Bullish"}, yahooJsonOutlook{"Bullish"}}, yahooJsonValuation{"Overvalued", "-1%"}}, yahooJsonUpsell{"Microsoft Corporation"}},
 	}
 	assert.Equal(t, len(expectedJsonRows), len(jsonRows))
 	assert.EqualValues(t, expectedJsonRows[0], jsonRows[0])
@@ -55,6 +55,7 @@ func TestYahoo(t *testing.T) {
 	expectedSqlRows := []models.SaveYahooInsightsRowParams{
 		{
 			Symbol:          "AAPL",
+			CompanyName:     sql.NullString{String: "Apple Inc.", Valid: true},
 			ShortTerm:       sql.NullString{String: "Bullish", Valid: true},
 			MidTerm:         sql.NullString{String: "Bearish", Valid: true},
 			LongTerm:        sql.NullString{String: "Neutral", Valid: true},
@@ -63,6 +64,7 @@ func TestYahoo(t *testing.T) {
 		},
 		{
 			Symbol:          "MSFT",
+			CompanyName:     sql.NullString{String: "Microsoft Corporation", Valid: true},
 			ShortTerm:       sql.NullString{String: "Bullish", Valid: true},
 			MidTerm:         sql.NullString{String: "Bullish", Valid: true},
 			LongTerm:        sql.NullString{String: "Bullish", Valid: true},

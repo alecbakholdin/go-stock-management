@@ -127,17 +127,19 @@ func (q *Queries) SaveTipranksRow(ctx context.Context, arg SaveTipranksRowParams
 const saveYahooInsightsRow = `-- name: SaveYahooInsightsRow :exec
 INSERT INTO yahoo_insights (
         symbol,
+        company_name,
         short_term,
         mid_term,
         long_term,
         estimated_return,
         fair_value
     )
-VALUES (?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?)
 `
 
 type SaveYahooInsightsRowParams struct {
 	Symbol          string
+	CompanyName     sql.NullString
 	ShortTerm       sql.NullString
 	MidTerm         sql.NullString
 	LongTerm        sql.NullString
@@ -148,6 +150,7 @@ type SaveYahooInsightsRowParams struct {
 func (q *Queries) SaveYahooInsightsRow(ctx context.Context, arg SaveYahooInsightsRowParams) error {
 	_, err := q.db.ExecContext(ctx, saveYahooInsightsRow,
 		arg.Symbol,
+		arg.CompanyName,
 		arg.ShortTerm,
 		arg.MidTerm,
 		arg.LongTerm,

@@ -84,6 +84,7 @@ type YahooInsight struct {
 	LongTerm        sql.NullString
 	FairValue       sql.NullString
 	EstimatedReturn sql.NullInt32
+	CompanyName     sql.NullString
 }
 
 type ZacksDaily struct {

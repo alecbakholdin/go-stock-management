@@ -75,8 +75,10 @@ func initDb(ec EnvConfig) *models.Queries {
 	if err != nil {
 		panic("Error connecting to mysql " + err.Error())
 	}
-	if err := goose.Up(db, ec.GooseMigrationsDir); err != nil {
-		panic("Error migrating DB: " + err.Error())
+	if err := goose.SetDialect(string(goose.DialectMySQL)); err != nil {
+		log.Fatalf("Error setting MYSQL dialect: %s", err.Error())
+	} else if err := goose.Up(db, ec.GooseMigrationsDir); err != nil {
+		log.Fatalf("Error migrating DB: %s", err.Error())
 	}
 	return models.New(db)
 }
