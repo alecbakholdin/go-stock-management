@@ -58,7 +58,7 @@ type Company struct {
 }
 
 type TaskHistory struct {
-	ID         string
+	ID         int64
 	TaskName   string
 	TaskStatus TaskHistoryTaskStatus
 	StartTime  time.Time
