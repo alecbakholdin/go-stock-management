@@ -47,6 +47,7 @@ goose-up:
 goose-down:
 	goose -dir ./config/migrations -s mysql "$(MYSQL)" down
 
+
 run: export MYSQL_CONNECTION_STRING = $(MYSQL)
 run: export SIGNING_SECRET = supersecret
 run: export ADMIN_USERNAME = admin
