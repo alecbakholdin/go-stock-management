@@ -20,15 +20,19 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	"github.com/pressly/goose/v3"
 	"github.com/robfig/cron/v3"
 )
 
 type EnvConfig struct {
 	Port                  string `env:"PORT"`
+
 	SigningSecret         string `env:"SIGNING_SECRET,required"`
 	AdminUsername         string `env:"ADMIN_USERNAME,required"`
 	AdminPassword         string `env:"ADMIN_PASSWORD,required"`
+
 	MySqlConnectionString string `env:"MYSQL_CONNECTION_STRING,required"`
+	GooseMigrationsDir string `env:"GOOSE_MIGRATIONS_DIR,required"`
 
 	ZacksUrl             string `env:"ZACKS_URL,required"`
 	ZacksDailyFormValue  string `env:"ZACKS_DAILY_FORM_VALUE,required"`
@@ -37,6 +41,7 @@ type EnvConfig struct {
 	YahooUrl string `env:"YAHOO_URL_PREFIX,required"`
 
 	TipRanksUrl string `env:"TIPRANKS_URL_PREFIX,required"`
+
 }
 
 func main() {
@@ -69,6 +74,9 @@ func initDb(ec EnvConfig) *models.Queries {
 	db, err := sql.Open("mysql", ec.MySqlConnectionString+"?parseTime=true")
 	if err != nil {
 		panic("Error connecting to mysql " + err.Error())
+	}
+	if err := goose.Up(db, ec.GooseMigrationsDir); err != nil {
+		panic("Error migrating DB: " + err.Error())
 	}
 	return models.New(db)
 }

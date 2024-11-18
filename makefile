@@ -51,5 +51,6 @@ run: export MYSQL_CONNECTION_STRING = $(MYSQL)
 run: export SIGNING_SECRET = supersecret
 run: export ADMIN_USERNAME = admin
 run: export ADMIN_PASSWORD = trust
-run: build mysql
+run: export GOOSE_MIGRATIONS_DIR = ./config/migrations
+run: build
 	./tmp/stock-management
