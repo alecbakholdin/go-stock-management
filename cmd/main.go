@@ -72,7 +72,7 @@ func initDb(ec EnvConfig) *models.Queries {
 	} else if strings.Contains(ec.MySqlConnectionString[atLoc:], "?") {
 		panic("MYSQL_CONNECTION_STRING should not contain any query params")
 	}
-	db, err := sql.Open("mysql", ec.MySqlConnectionString+"?parseTime=true")
+	db, err := sql.Open("mysql", ec.MySqlConnectionString+"?parseTime=true&multiStatements=true")
 	if err != nil {
 		panic("Error connecting to mysql " + err.Error())
 	}

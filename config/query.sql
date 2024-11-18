@@ -62,8 +62,14 @@ INSERT INTO yahoo_insights (
     )
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 -- name: SaveYahooQuotesRow :exec
-INSERT INTO yahoo_quotes (created, symbol, regular_market_price)
-VALUES (?, ?, ?);
+INSERT INTO yahoo_quotes (
+        created,
+        symbol,
+        short_name,
+        long_name,
+        regular_market_price
+    )
+VALUES (?, ?, ?, ?, ?);
 -- name: SaveTipranksRow :exec
 INSERT INTO tipranks (
         created,

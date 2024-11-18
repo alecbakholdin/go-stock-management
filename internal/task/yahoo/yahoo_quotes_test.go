@@ -2,6 +2,7 @@ package yahoo
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
 	"net/http/httptest"
 	"slices"
@@ -24,14 +25,14 @@ func TestYahooQuotes(t *testing.T) {
 		}
 	}))
 	quotesServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		cookieMatch := func(c *http.Cookie)bool{ 
+		cookieMatch := func(c *http.Cookie) bool {
 			return c.Name == "name" && c.Value == "value"
 		}
 		if !assert.Equal(t, testCrumb, r.URL.Query().Get("crumb")) {
 			w.WriteHeader(http.StatusForbidden)
 		} else if !assert.Equal(t, "AAPL,MSFT", r.URL.Query().Get("symbols")) {
 			w.WriteHeader(http.StatusBadRequest)
-		} else if !assert.True(t, slices.ContainsFunc(r.Cookies(), cookieMatch)){
+		} else if !assert.True(t, slices.ContainsFunc(r.Cookies(), cookieMatch)) {
 			w.WriteHeader(http.StatusUnauthorized)
 		} else {
 			http.ServeFile(w, r, "./yahoo_quotes_test.json")
@@ -45,8 +46,8 @@ func TestYahooQuotes(t *testing.T) {
 	if !assert.NoError(t, err) || !assert.Equal(t, 2, len(jsonRows)) {
 		t.FailNow()
 	}
-	expectedAapl := yahooQuotesJsonRow{"AAPL", 228.9501}
-	expectedMsft := yahooQuotesJsonRow{"MSFT", 415.53}
+	expectedAapl := yahooQuotesJsonRow{"AAPL", "Apple Inc.", "Apple Inc.", 228.175}
+	expectedMsft := yahooQuotesJsonRow{"MSFT", "Microsoft Corporation", "Microsoft Corporation", 415.83}
 	assert.Equal(t, expectedAapl, jsonRows[0])
 	assert.Equal(t, expectedMsft, jsonRows[1])
 
@@ -57,8 +58,20 @@ func TestYahooQuotes(t *testing.T) {
 	}
 	assert.NotZero(t, sqlRows[0].Created)
 	assert.Equal(t, sqlRows[0].Created, sqlRows[1].Created)
-	expectedAaplSql := models.SaveYahooQuotesRowParams{Created: sqlRows[0].Created, Symbol: "AAPL", RegularMarketPrice: 228.9501}
-	expectedMsftSql := models.SaveYahooQuotesRowParams{Created: sqlRows[1].Created, Symbol: "MSFT", RegularMarketPrice: 415.53}
+	expectedAaplSql := models.SaveYahooQuotesRowParams{
+		Created:            sqlRows[0].Created,
+		Symbol:             "AAPL",
+		ShortName:          sql.NullString{String: "Apple Inc.", Valid: true},
+		LongName:           sql.NullString{String: "Apple Inc.", Valid: true},
+		RegularMarketPrice: 228.175,
+	}
+	expectedMsftSql := models.SaveYahooQuotesRowParams{
+		Created:            sqlRows[1].Created,
+		Symbol:             "MSFT",
+		ShortName:          sql.NullString{String: "Microsoft Corporation", Valid: true},
+		LongName:           sql.NullString{String: "Microsoft Corporation", Valid: true},
+		RegularMarketPrice: 415.83,
+	}
 	assert.Equal(t, expectedAaplSql, sqlRows[0])
 	assert.Equal(t, expectedMsftSql, sqlRows[1])
 }

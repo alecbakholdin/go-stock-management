@@ -1,6 +1,7 @@
 BUILD_CMD=go build -o ./tmp/stock-management cmd/main.go
 GOOSE_COMMAND=goose -dir ./config/migrations mysql "root:password@/stock_ratings"
 MYSQL=root:password@tcp(localhost:3306)/stock_ratings
+GOOSE_MYSQL=$(MYSQL)?multiStatements=true
 
 ifneq (,$(wildcard ./.env))
 	include .env
@@ -39,13 +40,13 @@ mysql-down:
 	docker rm -f go-stock-management-mysql
 
 goose-create:
-	goose -dir ./config/migrations -s mysql "$(MYSQL)" create migration sql
+	goose -dir ./config/migrations -s mysql "$(GOOSE_MYSQL)" create migration sql
 
 goose-up:
-	goose -dir ./config/migrations -s mysql "$(MYSQL)" up
+	goose -dir ./config/migrations -s mysql "$(GOOSE_MYSQL)" up
 
 goose-down:
-	goose -dir ./config/migrations -s mysql "$(MYSQL)" down
+	goose -dir ./config/migrations -s mysql "$(GOOSE_MYSQL)" down
 
 
 run: export MYSQL_CONNECTION_STRING = $(MYSQL)

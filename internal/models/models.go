@@ -91,6 +91,8 @@ type YahooQuote struct {
 	Created            time.Time
 	Symbol             string
 	RegularMarketPrice float64
+	ShortName          sql.NullString
+	LongName           sql.NullString
 }
 
 type ZacksDaily struct {
