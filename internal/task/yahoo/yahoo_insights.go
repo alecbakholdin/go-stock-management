@@ -10,6 +10,7 @@ import (
 	"stock-management/internal/models"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/labstack/gommon/log"
 )
@@ -77,6 +78,7 @@ func (y *yahooExecutor) getRowBatch(batch []string) ([]yahooJsonRow, error) {
 }
 
 func (f *yahooExecutor) Save(rows []yahooJsonRow) (int, error) {
+	created := time.Now()
 	num := 0
 	for i, row := range rows {
 		estimatedReturn, err := strconv.Atoi(strings.TrimSuffix(row.InstrumentInfo.Valuation.Discount, "%"))
@@ -84,6 +86,7 @@ func (f *yahooExecutor) Save(rows []yahooJsonRow) (int, error) {
 			log.Warnf("Error converting %s to int for Yahoo Insights executor for row %d, symbol %s: %s", row.InstrumentInfo.Valuation.Discount, i, row.Symbol, err.Error())
 		}
 		sqlRow := models.SaveYahooInsightsRowParams{
+			Created:         created,
 			Symbol:          row.Symbol,
 			CompanyName:     models.NullStringIfZero(row.Upsell.CompanyName),
 			ShortTerm:       models.NullStringIfZero(row.InstrumentInfo.TechnicalEvents.ShortTermOutlook.Direction),

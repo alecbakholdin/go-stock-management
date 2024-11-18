@@ -3,31 +3,21 @@ package yahoo
 import (
 	"context"
 	"database/sql"
-	"io"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"stock-management/internal/models"
 	"testing"
+	"time"
 
-	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestYahoo(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var file *os.File
-		var err error
-		if file, err = os.Open("./yahoo_test.json"); err != nil {
-			panic("error opening file " + err.Error())
-		}
-		defer file.Close()
-
-		if bytes, err := io.ReadAll(file); err != nil {
-			panic("error reading from file: " + err.Error())
+		if symbols := r.URL.Query().Get("symbols"); symbols != "AAPL,MSFT" {
+			t.Errorf("Expected AAPL,MSFT but got %s", symbols)
 		} else {
-			w.Header().Add(echo.HeaderContentType, echo.MIMEApplicationJSON)
-			w.Write(bytes)
+			http.ServeFile(w, r, "./yahoo_insights_test.json")
 		}
 	}))
 	url := server.URL + "?symbols="
@@ -74,6 +64,10 @@ func TestYahoo(t *testing.T) {
 	}
 	assert.Equal(t, 2, n)
 	assert.Equal(t, len(expectedSqlRows), len(yahooSaver.written))
+	assert.NotZero(t, yahooSaver.written[0].Created)
+	assert.Equal(t, yahooSaver.written[0].Created, yahooSaver.written[1].Created)
+	expectedSqlRows[0].Created = yahooSaver.written[0].Created
+	expectedSqlRows[1].Created = yahooSaver.written[1].Created
 	assert.Equal(t, expectedSqlRows[0], yahooSaver.written[0])
 	assert.Equal(t, expectedSqlRows[1], yahooSaver.written[1])
 }
@@ -88,5 +82,6 @@ func (y *yahooSaver) ListCompanies(ctx context.Context) ([]string, error) {
 
 func (y *yahooSaver) SaveYahooInsightsRow(ctx context.Context, row models.SaveYahooInsightsRowParams) error {
 	y.written = append(y.written, row)
+	time.Sleep(time.Millisecond)
 	return nil
 }
