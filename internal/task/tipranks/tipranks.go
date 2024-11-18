@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"stock-management/internal/models"
 	"strings"
+	"time"
 
 	"github.com/labstack/gommon/log"
 )
@@ -51,9 +52,11 @@ func (t *tipranksExecutor) Fetch() ([]tipranksJsonRow, error) {
 }
 
 func (t *tipranksExecutor) Save(rows []tipranksJsonRow) (int, error) {
+	created := time.Now()
 	n := 0
 	for i, row := range rows {
 		sqlRow := models.SaveTipranksRowParams{
+			Created:                created,
 			Symbol:                 row.Symbol,
 			NewsSentiment:          sql.NullInt32{Int32: int32(row.NewsSentiment), Valid: true},
 			AnalystConsensus:       models.NullStringIfZero(row.AnalystConsensus.Consensus),

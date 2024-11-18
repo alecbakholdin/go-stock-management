@@ -46,6 +46,10 @@ func TestTipranks(t *testing.T) {
 		BestAnalystPriceTarget: sql.NullFloat64{Float64: 246.22, Valid: true},
 	}
 	expectedRandomSql := models.SaveTipranksRowParams{Symbol: "RANDOM", NewsSentiment: sql.NullInt32{Int32: 0, Valid: true}}
+	assert.NotZero(t, tipranksTable.written[0].Created)
+	assert.Equal(t, tipranksTable.written[0].Created, tipranksTable.written[1].Created)
+	expectedApplSql.Created = tipranksTable.written[0].Created
+	expectedRandomSql.Created = tipranksTable.written[1].Created
 	assert.Equal(t, expectedApplSql, tipranksTable.written[0])
 	assert.Equal(t, expectedRandomSql, tipranksTable.written[1])
 }

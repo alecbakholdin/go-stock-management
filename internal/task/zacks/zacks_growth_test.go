@@ -71,8 +71,7 @@ func TestZacksGrowth(t *testing.T) {
 	assert.Equal(t, 2, n)
 	assert.Equal(t, 2, len(growthSaver.saved))
 	assert.NotZero(t, growthSaver.saved[0].Created)
-	assert.NotZero(t, growthSaver.saved[1].Created)
-	assert.Equal(t, growthSaver.saved[0], growthSaver.saved[1])
+	assert.Equal(t, growthSaver.saved[0].Created, growthSaver.saved[1].Created)
 	expectedSqlRows[0].Created = growthSaver.saved[0].Created
 	expectedSqlRows[1].Created = growthSaver.saved[1].Created
 	assert.EqualValues(t, expectedSqlRows[0], growthSaver.saved[0])

@@ -70,8 +70,7 @@ func TestZacksDaily(t *testing.T) {
 	assert.Equal(t, 2, len(s.savedRows))
 	assert.Equal(t, 2, n)
 	assert.NotZero(t, s.savedRows[0].Created)
-	assert.NotZero(t, s.savedRows[1].Created)
-	assert.Equal(t, s.savedRows[0], s.savedRows[1])
+	assert.Equal(t, s.savedRows[0].Created, s.savedRows[1].Created)
 	expectedSave[0].Created = s.savedRows[0].Created
 	expectedSave[1].Created = s.savedRows[1].Created
 	assert.Equal(t, expectedSave[0], s.savedRows[0])
