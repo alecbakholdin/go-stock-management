@@ -103,7 +103,6 @@ func initAndScheduleTasks(ec EnvConfig, q *models.Queries) []task.Task {
 	if _, err := c.AddFunc("0 10,14 * * MON-FRI", allTasks); err != nil {
 		log.Fatalf("Error adding cron job 1: %s", err.Error())
 	} else if _, err := c.AddFunc("30 16 * * MON-FRI", allTasks); err != nil {
-
 		log.Fatalf("Error adding cron job 2: %s", err.Error())
 	}
 	c.Start()
