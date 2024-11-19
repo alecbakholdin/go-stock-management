@@ -25,11 +25,8 @@ it gets really tedious after doing it every day a few times a day.
 
 This automates the process and also lets me practice some
 programming in Go. I want to use this as an example of something that I've made
-that is actually unit tested, *deployed*,and being used by a real person
-in the real world. It's easy enough to write a CLI toy that scrapes 
-the web on-demand, but another to make a usable application that someone
-that isn't me can rely on in their day-to-day operations. 
-
+that's unit tested and helping someone, not just sitting as a half-abandoned
+side project that never got completed.
 
 ## Features
 ### Login page
