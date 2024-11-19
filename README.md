@@ -32,11 +32,13 @@ that isn't me can rely on in their day-to-day operations.
 
 
 ## Features
-#### Login page
+### Login page
+---
 ![login page](./markdown/login_page.png)
 Uses JWT cookie authentication using Echo's JWT middleware.
 Nothing special, but serves its purpose well enough.
-#### Task execution page
+### Task execution page
+---
 ![task execution page](./markdown/tasks.png)
 ![executing task](./markdown/executing_task.png)
 This is the primary reason I made this tool. It allows the authenticated user to manually trigger
@@ -45,7 +47,8 @@ from a website e.g. finance.yahoo.com, parses it and saves it into a more struct
 
 The last execution, whether scheduled or manual, is shown
 on this page as well (see 'last executed...'). 
-#### Scheduled tasks 
+### Scheduled tasks 
+---
 ```go
 c := cron.New(cron.WithLocation(must.MustLoadLocation("America/New_York")))
 if _, err := c.AddFunc("0 10,14 * * MON-FRI", allTasks); err != nil {
