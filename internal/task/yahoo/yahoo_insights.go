@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 	"stock-management/internal/models"
 	"stock-management/internal/task/httpunmarshal"
@@ -71,7 +72,12 @@ func (f *yahooExecutor) fetchBatch(companies []string) ([]yahooJsonRow, error) {
 
 	log.Infof("%s", urlPrefix.String())
 	jsonResponse := yahooJsonResponse{}
-	if err := httpunmarshal.Get(urlPrefix.String(), &jsonResponse); err != nil {
+	req, err := http.NewRequest(http.MethodGet, urlPrefix.String(), nil)
+	if err != nil {
+		return nil, fmt.Errorf("creating yahoo insights request: %w", err)
+	}
+	addBrowserHeaders(req)
+	if err := httpunmarshal.Do(req, &jsonResponse); err != nil {
 		return nil, errors.Join(errors.New("error making yahoo insights request"), err)
 	}
 	return jsonResponse.Finance.Result, nil
