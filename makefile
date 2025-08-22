@@ -27,8 +27,8 @@ build-linux-32:build-deps
 	GOOS=linux GOARCH=386 $(BUILD_CMD)
 
 build-deps:
-	templ generate
-	sqlc generate -f ./config/sqlc.yaml
+	go tool templ generate
+	go tool sqlc generate -f ./config/sqlc.yaml
 
 docker:
 	docker build -f dev.Dockerfile --name 'go-stock-management'

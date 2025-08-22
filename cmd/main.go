@@ -27,9 +27,9 @@ import (
 type EnvConfig struct {
 	Port string `env:"PORT"`
 
-	SigningSecret string `env:"SIGNING_SECRET,required"`
-	AdminUsername string `env:"ADMIN_USERNAME,required"`
-	AdminPassword string `env:"ADMIN_PASSWORD,required"`
+	SigningSecret string `env:"SIGNING_SECRET"`
+	AdminUsername string `env:"ADMIN_USERNAME"`
+	AdminPassword string `env:"ADMIN_PASSWORD"`
 
 	MySqlConnectionString string `env:"MYSQL_CONNECTION_STRING,required"`
 	GooseMigrationsDir    string `env:"GOOSE_MIGRATIONS_DIR,required"`
@@ -117,24 +117,29 @@ func initEchoClient(ec EnvConfig, tasks []task.Task) *echo.Echo {
 	e.Use(middleware.RequestID())
 	e.Use(middleware.Recover())
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{Format: "${time_rfc3339} [id=${id}] ${method} ${path} ${status} ${error}\n"}))
-	e.Use(echojwt.WithConfig(echojwt.Config{
-		TokenLookup: "cookie:Authorization", SigningKey: []byte(ec.SigningSecret),
-		Skipper: func(c echo.Context) bool {
-			_, ok := c.Cookie("Authorization")
-			return ok != nil
-		},
-		ErrorHandler: func(c echo.Context, err error) error {
-			c.Logger().Error(err)
-			return nil
-		},
-		SuccessHandler: func(c echo.Context) {
-			c.SetRequest(c.Request().WithContext(context.WithValue(c.Request().Context(), "user", c.Get("user"))))
-		},
-		ContinueOnIgnoredError: true,
-	}))
+	if (ec.AdminPassword != "" || ec.AdminUsername != "" || ec.SigningSecret != "") && (ec.AdminPassword == "" || ec.AdminUsername == "" || ec.SigningSecret == "") {
+		panic("If ADMIN_USERNAME, ADMIN_PASSWORD, or SIGNING_SECRET env variable is set, all three must be set")
+	}
+	if ec.AdminPassword != "" && ec.AdminUsername != "" && ec.SigningSecret != "" {
+		e.Use(echojwt.WithConfig(echojwt.Config{
+			TokenLookup: "cookie:Authorization", SigningKey: []byte(ec.SigningSecret),
+			Skipper: func(c echo.Context) bool {
+				_, ok := c.Cookie("Authorization")
+				return ok != nil
+			},
+			ErrorHandler: func(c echo.Context, err error) error {
+				c.Logger().Error(err)
+				return nil
+			},
+			SuccessHandler: func(c echo.Context) {
+				c.SetRequest(c.Request().WithContext(context.WithValue(c.Request().Context(), "user", c.Get("user"))))
+			},
+			ContinueOnIgnoredError: true,
+		}))
+		e.POST("/login", login.Handler(ec.SigningSecret, ec.AdminUsername, ec.AdminPassword))
+	}
 
 	e.GET("/", root.Handler(tasks))
-	e.POST("/login", login.Handler(ec.SigningSecret, ec.AdminUsername, ec.AdminPassword))
 	for _, task := range tasks {
 		e.GET(task.UrlPath(), task.GetHandler)
 		e.POST(task.UrlPath(), task.PostHandler)
