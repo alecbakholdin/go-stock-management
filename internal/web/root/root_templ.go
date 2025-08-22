@@ -9,12 +9,11 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/golang-jwt/jwt/v5"
 	"stock-management/internal/task"
 	"stock-management/internal/web/login"
 )
 
-func Root(tasks []task.Task) templ.Component {
+func Root(useAuth bool, tasks []task.Task) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -51,7 +50,7 @@ func Root(tasks []task.Task) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if _, ok := ctx.Value("user").(*jwt.Token); ok {
+		if useAuth {
 			templ_7745c5c3_Err = task.Tasks(tasks).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -91,7 +90,7 @@ func scriptInits() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<style>\n      :root {\n        font-family: Inter, sans-serif;\n        font-feature-settings: \"liga\" 1, \"calt\" 1; /* fix for Chrome */\n      }\n      @supports (font-variation-settings: normal) {\n        :root {\n          font-family: InterVariable, sans-serif;\n        }\n      }\n    </style><script>\n      const htmlElement = document.documentElement;\n\n      if (\n        localStorage.getItem(\"mode\") === \"dark\" ||\n        (!(\"mode\" in localStorage) &&\n          window.matchMedia(\"(prefers-color-scheme: dark)\").matches)\n      ) {\n        htmlElement.classList.add(\"dark\");\n      } else {\n        htmlElement.classList.remove(\"dark\");\n      }\n\n      htmlElement.classList.add(\n        localStorage.getItem(\"theme\") || \"uk-theme-zinc\"\n      );\n    </script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<style>\n  :root {\n    font-family: Inter, sans-serif;\n    font-feature-settings: \"liga\" 1, \"calt\" 1;\n    /* fix for Chrome */\n  }\n\n  @supports (font-variation-settings: normal) {\n    :root {\n      font-family: InterVariable, sans-serif;\n    }\n  }\n</style><script>\n  const htmlElement = document.documentElement;\n\n  if (\n    localStorage.getItem(\"mode\") === \"dark\" ||\n    (!(\"mode\" in localStorage) &&\n      window.matchMedia(\"(prefers-color-scheme: dark)\").matches)\n  ) {\n    htmlElement.classList.add(\"dark\");\n  } else {\n    htmlElement.classList.remove(\"dark\");\n  }\n\n  htmlElement.classList.add(\n    localStorage.getItem(\"theme\") || \"uk-theme-zinc\"\n  );\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

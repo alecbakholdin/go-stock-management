@@ -120,7 +120,8 @@ func initEchoClient(ec EnvConfig, tasks []task.Task) *echo.Echo {
 	if (ec.AdminPassword != "" || ec.AdminUsername != "" || ec.SigningSecret != "") && (ec.AdminPassword == "" || ec.AdminUsername == "" || ec.SigningSecret == "") {
 		panic("If ADMIN_USERNAME, ADMIN_PASSWORD, or SIGNING_SECRET env variable is set, all three must be set")
 	}
-	if ec.AdminPassword != "" && ec.AdminUsername != "" && ec.SigningSecret != "" {
+	useAuth := ec.AdminPassword != "" && ec.AdminUsername != "" && ec.SigningSecret != ""
+	if useAuth {
 		e.Use(echojwt.WithConfig(echojwt.Config{
 			TokenLookup: "cookie:Authorization", SigningKey: []byte(ec.SigningSecret),
 			Skipper: func(c echo.Context) bool {
@@ -139,7 +140,7 @@ func initEchoClient(ec EnvConfig, tasks []task.Task) *echo.Echo {
 		e.POST("/login", login.Handler(ec.SigningSecret, ec.AdminUsername, ec.AdminPassword))
 	}
 
-	e.GET("/", root.Handler(tasks))
+	e.GET("/", root.Handler(useAuth, tasks))
 	for _, task := range tasks {
 		e.GET(task.UrlPath(), task.GetHandler)
 		e.POST(task.UrlPath(), task.PostHandler)
