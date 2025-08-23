@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/golang-jwt/jwt/v5"
 	"stock-management/internal/task"
 	"stock-management/internal/web/login"
 )
@@ -50,7 +51,12 @@ func Root(useAuth bool, tasks []task.Task) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if useAuth {
+		if !useAuth {
+			templ_7745c5c3_Err = task.Tasks(tasks).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if _, ok := ctx.Value("user").(*jwt.Token); ok {
 			templ_7745c5c3_Err = task.Tasks(tasks).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

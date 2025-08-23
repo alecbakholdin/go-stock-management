@@ -1,6 +1,7 @@
 package root
 
 import (
+"github.com/golang-jwt/jwt/v5"
 "stock-management/internal/task"
 "stock-management/internal/web/login"
 )
@@ -18,7 +19,9 @@ templ Root(useAuth bool, tasks []task.Task) {
 </head>
 
 <body class="bg-background text-foreground">
-  if useAuth {
+  if !useAuth {
+  @task.Tasks(tasks)
+  } else if _, ok := ctx.Value("user").(*jwt.Token); ok {
   @task.Tasks(tasks)
   } else {
   @login.Login()
