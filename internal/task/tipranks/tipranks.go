@@ -35,7 +35,7 @@ func (t *tipranksExecutor) Fetch() ([]tipranksJsonRow, error) {
 		return nil, errors.Join(errors.New("error fetching companies"), err)
 	}
 	var jsonObj tipranksJsonResponse
-	if err := httpunmarshal.Get(t.url + strings.Join(companies, ","), &jsonObj); err != nil {
+	if err := httpunmarshal.Get(t.url+strings.Join(companies, ","), &jsonObj); err != nil {
 		return nil, errors.Join(errors.New("error fetching from tipranks"), err)
 	}
 	return jsonObj.Data, nil
@@ -45,17 +45,19 @@ func (t *tipranksExecutor) Save(rows []tipranksJsonRow) (int, error) {
 	created := time.Now()
 	n := 0
 	for i, row := range rows {
+		analystConsensus := strings.ToLower(row.TipRanksEssentialData.AnalystConsensusData.AnalystConsensus.Name)
+		bestAnalystConsensus := strings.ToLower(row.TipRanksEssentialData.BestAnalystConsensusData.AnalystConsensus.Name)
 		sqlRow := models.SaveTipranksRowParams{
 			Created:                created,
-			Symbol:                 row.Symbol,
-			NewsSentiment:          sql.NullInt32{Int32: int32(row.NewsSentiment), Valid: true},
-			AnalystConsensus:       models.NullStringIfZero(row.AnalystConsensus.Consensus),
-			AnalystPriceTarget:     models.NullFloat64IfZero(float64(row.PriceTarget)),
-			BestAnalystConsensus:   models.NullStringIfZero(row.BestAnalystConsensus.Consensus),
-			BestAnalystPriceTarget: models.NullFloat64IfZero(float64(row.BestPriceTarget)),
+			Symbol:                 row.TradingInformationData.Symbol,
+			NewsSentiment:          sql.NullInt32{Int32: int32(row.TipRanksEssentialData.NewsSentiment.NewsSentiment.Id), Valid: true},
+			AnalystConsensus:       models.NullStringIfZero(analystConsensus),
+			AnalystPriceTarget:     models.NullFloat64IfZero(float64(row.TipRanksEssentialData.PriceTargetData.PriceTarget)),
+			BestAnalystConsensus:   models.NullStringIfZero(bestAnalystConsensus),
+			BestAnalystPriceTarget: models.NullFloat64IfZero(float64(row.TipRanksEssentialData.BestPriceTargetData.PriceTarget)),
 		}
 		if err := t.q.SaveTipranksRow(context.Background(), sqlRow); err != nil {
-			log.Warnf("Error saving tipranks row %d for symbol %s: %s", i, row.Symbol, err.Error())
+			log.Warnf("Error saving tipranks row %d for symbol %s: %s", i, row.TradingInformationData.Symbol, err.Error())
 		} else {
 			n += 1
 		}
@@ -64,18 +66,42 @@ func (t *tipranksExecutor) Save(rows []tipranksJsonRow) (int, error) {
 }
 
 type tipranksJsonResponse struct {
-	Data []tipranksJsonRow
+	Data []tipranksJsonRow `json:"assets"`
 }
 
 type tipranksJsonRow struct {
-	Symbol               string `json:"ticker"`
-	NewsSentiment        int
-	AnalystConsensus     tipranksAnalystConsensus
-	BestAnalystConsensus tipranksAnalystConsensus
-	PriceTarget          float64
-	BestPriceTarget      float64
+	TradingInformationData tipRanksTradingInformationData `json:"tradingInformationData"`
+	TipRanksEssentialData  tipRanksEssentialData          `json:"tipRanksEssentialData"`
 }
 
-type tipranksAnalystConsensus struct {
-	Consensus string
+type tipRanksTradingInformationData struct {
+	Symbol string `json:"ticker"`
+}
+
+type tipRanksEssentialData struct {
+	PriceTargetData          tipRanksPriceTargetData      `json:"priceTargetData"`
+	BestPriceTargetData      tipRanksPriceTargetData      `json:"bestPriceTargetData"`
+	AnalystConsensusData     tipranksAnalystConsensusData `json:"analystsConsensusData"`
+	BestAnalystConsensusData tipranksAnalystConsensusData `json:"bestAnalystsConsensusData"`
+	NewsSentiment            tipRanksNewsSentimentData    `json:"newsSentimentData"`
+}
+
+type tipRanksPriceTargetData struct {
+	PriceTarget float64 `json:"priceTarget"`
+}
+
+type tipranksAnalystConsensusData struct {
+	AnalystConsensus tipRanksNameContainer `json:"analystConsensus"`
+}
+
+type tipRanksNameContainer struct {
+	Name string `json:"name"`
+}
+
+type tipRanksNewsSentimentData struct {
+	NewsSentiment tipRanksNewsSentimentId `json:"newsSentiment"`
+}
+
+type tipRanksNewsSentimentId struct {
+	Id int `json:"id"`
 }

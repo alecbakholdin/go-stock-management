@@ -1,193 +1,372 @@
 {
-  "data": [
+  "assets": [
     {
-      "ticker": "AAPL",
-      "stockType": "stock",
-      "stockTypeId": 1,
-      "sectorId": "technology",
-      "analystConsensus": {
-        "consensus": "buy",
-        "rawConsensus": 4,
-        "distribution": {
-          "buy": 24,
-          "hold": 8,
-          "sell": 2
-        }
-      },
-      "bestAnalystConsensus": {
-        "consensus": "sell",
-        "rawConsensus": 4,
-        "distribution": {
-          "buy": 21,
-          "hold": 6,
-          "sell": 2
-        }
-      },
-      "nextDividendDate": null,
-      "lastReportedEps": {
-        "date": "2024-10-31T00:00:00",
-        "company": "Apple",
+      "tradingInformationData": {
         "ticker": "AAPL",
-        "periodEnding": "Sep 2024",
-        "eps": 1.6,
-        "reportedEPS": 0.97,
-        "lastEps": 1.46,
-        "consensus": null,
-        "bpConsensus": null,
-        "ratingsAndPT": {
-          "priceTarget": null,
-          "numBuys": null,
-          "numHolds": null,
-          "numSells": null
-        },
-        "bpRatingsAndPT": {
-          "priceTarget": null,
-          "numBuys": null,
-          "numHolds": null,
-          "numSells": null
-        },
-        "marketCap": 3401060229492,
-        "marketCapCurrencyId": 1,
-        "stockListingMarketCap": null,
-        "stockListingmarketCapCurrencyId": null,
-        "stockListingMarketCapUSD": null,
-        "stockListingISOMIC": null,
-        "stockListingIsPrimaryMarket": null,
-        "stockListingFollowers": null,
-        "sector": 17349,
         "stockId": 7624,
-        "stockTypeId": 1,
-        "surprise": 0.649484536082474,
-        "timeOfDay": 1,
-        "isConfirmed": true,
-        "currencyTypeID": 1,
-        "epsCurrencyTypeID": 1,
-        "fiscalPeriod": 4,
-        "fiscalYear": 2024,
-        "fiscalQuarterEndingDate": "2024-09-30T00:00:00",
-        "totalIncome": 14736000000,
-        "totalRevenue": 94930000000,
-        "revenueIncomeCurrencyID": 1,
-        "urlReport": "https://www.apple.com/newsroom/2024/10/apple-reports-fourth-quarter-results/",
-        "lowEstimate": null,
-        "highEstimate": null,
-        "salesEstimate": 94511953000,
-        "salesLowEstimate": null,
-        "salesHighEstimate": null,
-        "smartScore": null,
-        "externalAudioUrl": null,
-        "externalReportUrl": null,
-        "externalPdfUrl": null,
-        "externalImageUrl": null
+        "stockUid": "32c36ad3",
+        "stockListingId": 212,
+        "stockTypeId": {
+          "id": 1,
+          "name": "Stock"
+        },
+        "companyName": "Apple Inc",
+        "companyFullName": null,
+        "companyDisplayName": "Apple",
+        "countryType": {
+          "id": 1,
+          "name": "US"
+        },
+        "marketName": "NASDAQ",
+        "isomic": "XNAS",
+        "stockCurrnecyType": {
+          "id": 1,
+          "name": "USD"
+        },
+        "stockListingCurrencyType": {
+          "id": 1,
+          "name": "USD"
+        },
+        "stockListingIsPrimaryMarket": true,
+        "stockListingIsPrimary": true,
+        "description": "Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories worldwide. The company offers iPhone, a line of smartphones; Mac, a line of personal computers; iPad, a line of multi-purpose tablets; and wearables, home, and accessories comprising AirPods, Apple TV, Apple Watch, Beats products, and HomePod. It also provides AppleCare support and cloud services; and operates various platforms, including the App Store that allow customers to discover and download applications and digital content, such as books, music, video, games, and podcasts, as well as advertising services include third-party licensing arrangements and its own advertising platforms. In addition, the company offers various subscription-based services, such as Apple Arcade, a game subscription service; Apple Fitness+, a personalized fitness service; Apple Music, which offers users a curated listening experience with on-demand radio stations; Apple News+, a subscription news and magazine service; Apple TV+, which offers exclusive original content; Apple Card, a co-branded credit card; and Apple Pay, a cashless payment service, as well as licenses its intellectual property. The company serves consumers, and small and mid-sized businesses; and the education, enterprise, and government markets. It distributes third-party applications for its products through the App Store. The company also sells its products through its retail and online stores, and direct sales force; and third-party cellular network carriers, wholesalers, retailers, and resellers. Apple Inc. was founded in 1976 and is headquartered in Cupertino, California.",
+        "ceo": "Timothy D. Cook",
+        "industry": "Consumer Electronics",
+        "employeesNumber": 164000,
+        "employeesGroup": {
+          "id": 6,
+          "name": "MegaCorporation"
+        },
+        "marketCap": 4017098984819,
+        "marketCapCurrency": {
+          "id": 1,
+          "name": "USD"
+        },
+        "marketCapUSD": 4017098984819,
+        "marketCapGroup": {
+          "id": 1,
+          "name": "Mega"
+        },
+        "peRatio": 36.417,
+        "peRatioGroup": {
+          "id": 4,
+          "name": "Above25"
+        },
+        "sector": {
+          "id": 7,
+          "name": "Technology"
+        },
+        "lastVolume": 27293641,
+        "average3MVolume": 45288796,
+        "average3MVolumeGroup": {
+          "id": 3,
+          "name": "BetweenTenMillionToFiftyMillion"
+        },
+        "lastClose": 271.86,
+        "lastCloseUSD": 271.86,
+        "lastCloseGroup": {
+          "id": 3,
+          "name": "Between100To1000"
+        },
+        "lastCloseUSDGroup": {
+          "id": 5,
+          "name": "Between100To1000"
+        },
+        "high52Weeks": 288.62,
+        "low52Weeks": 169.21,
+        "fiftyTwoWeeksRangeGroup": {
+          "id": 3,
+          "name": "BetweenFiveToTenPercentBelowHigh"
+        },
+        "beta": 1.1286054,
+        "betaGroup": {
+          "id": 3,
+          "name": "ModerateBeta"
+        },
+        "outstandingShares": 14776353000,
+        "outstandingSharesGroup": {
+          "id": 5,
+          "name": "AboveFourHundredMillion"
+        },
+        "dollarVolume": 7420049242.26,
+        "dollarVolumeGroup": {
+          "id": 5,
+          "name": "AboveOneBillion"
+        },
+        "prevEnterpriseValue": 3854737.55514,
+        "prevEnterpriseValueCurrency": {
+          "id": 1,
+          "name": "USD"
+        },
+        "priceChangePct": -0.00446,
+        "relativeVolume": 0.6026576860201803,
+        "relativeVolumeGroup": {
+          "id": 8,
+          "name": "BetweenZeroPointFiveToZeroPointSevenFive"
+        },
+        "stockISIN": "US0378331005"
       },
-      "nextEarningsReport": {
-        "date": "2025-01-30T00:00:00",
-        "company": "Apple",
-        "ticker": "AAPL",
-        "periodEnding": "Dec 2024",
-        "eps": 2.36,
-        "reportedEPS": null,
-        "lastEps": 2.18,
-        "consensus": null,
-        "bpConsensus": null,
-        "ratingsAndPT": {
-          "priceTarget": null,
-          "numBuys": null,
-          "numHolds": null,
-          "numSells": null
+      "dividendData": {
+        "exDividendDate": null,
+        "dividendPaymentDate": null,
+        "lastDividendAmount": 1.03,
+        "splitAdujstedDividendAmount": null,
+        "ltmDividendAmount": 1.03,
+        "convertedLTMDividendAmount": 1.03,
+        "payoutRatio": 0.27917,
+        "payoutRatioGroup": {
+          "id": 3,
+          "name": "Between20To40Percent"
         },
-        "bpRatingsAndPT": {
-          "priceTarget": null,
-          "numBuys": null,
-          "numHolds": null,
-          "numSells": null
+        "lastFiscalDividendRate": 0.26,
+        "dividendYield": 0.3788729298168175,
+        "dividendYieldGroup": {
+          "id": 2,
+          "name": "Positive"
         },
-        "marketCap": 3401060229492,
-        "marketCapCurrencyId": 1,
-        "stockListingMarketCap": null,
-        "stockListingmarketCapCurrencyId": null,
-        "stockListingMarketCapUSD": null,
-        "stockListingISOMIC": null,
-        "stockListingIsPrimaryMarket": null,
-        "stockListingFollowers": null,
-        "sector": 17349,
-        "stockId": 7624,
-        "stockTypeId": 1,
-        "surprise": null,
-        "timeOfDay": 4,
-        "isConfirmed": false,
-        "currencyTypeID": 1,
-        "epsCurrencyTypeID": 1,
+        "forwardDividendYield": null,
+        "dividendFrequencyCode": null
+      },
+      "earningsData": {
+        "upcomingEarningsDate": "2026-01-29T00:00:00",
+        "fiscalQuarterEnding": "Dec 2025",
+        "fiscalQuarterEndingDate": "2025-12-31T00:00:00",
+        "epsEstimate": 2.665,
+        "convertedEPSEstimate": 2.665,
+        "salesEstimate": 137342.565,
+        "convertedSalesEstimate": 137342.565,
+        "lastYearQuarterEPS": 2.4,
+        "convertedLastYearQuarterEPS": 2.4,
+        "financialNetIncome": 27466,
+        "convertedFinancialNetIncome": 27466,
+        "financialNetProfit": 42832000000,
+        "financialRevenue": 102466,
+        "convertedFinancialRevenue": 102466,
+        "eps": 7.459,
+        "epsGroup": {
+          "id": 6,
+          "name": "VeryHighEPS"
+        },
+        "prevEPS": 1.85,
+        "convertedPrevEPS": 1.85,
+        "earningsCalendarTitle": "Q1 2026 Earnings Release",
         "fiscalPeriod": 1,
-        "fiscalYear": 2025,
-        "fiscalQuarterEndingDate": "2024-12-31T00:00:00",
-        "totalIncome": null,
-        "totalRevenue": null,
-        "revenueIncomeCurrencyID": 1,
-        "urlReport": null,
-        "lowEstimate": null,
-        "highEstimate": null,
-        "salesEstimate": 125235664000,
-        "salesLowEstimate": null,
-        "salesHighEstimate": null,
-        "smartScore": null,
-        "externalAudioUrl": null,
-        "externalReportUrl": null,
-        "externalPdfUrl": null,
-        "externalImageUrl": null
-      },
-      "stockUid": "32c36ad3",
-      "companyName": "Apple",
-      "priceTarget": 245.35,
-      "bestPriceTarget": 246.22,
-      "dividend": 0.25,
-      "dividendYield": 0.00435,
-      "peRatio": 36.984,
-      "stockId": 7624,
-      "high52Weeks": 237.49,
-      "low52Weeks": 164.075,
-      "hedgeFundSentimentData": {
-        "rating": 3,
-        "score": 0.0133
-      },
-      "insiderSentimentData": {
-        "rating": 3,
-        "stockScore": 0.2916
-      },
-      "bloggerSentimentData": {
-        "ratingIfExists": 1,
-        "rating": 1,
-        "bearishCount": 41,
-        "bullishCount": 161
-      },
-      "shouldAddLinkToStockPage": true,
-      "expenseRatio": null,
-      "marketCap": 3401060229492,
-      "marketCapCurrencyId": 1,
-      "newsSentiment": 5,
-      "landmarkPrices": {
-        "yearToDate": {
-          "date": "2024-01-01T00:00:00",
-          "d": "1/1/24",
-          "p": 191.59
+        "fiscalYear": 2026,
+        "highEstimate": 2.76,
+        "convertedHighEstimate": 2.76,
+        "lowEstimate": 2.51,
+        "convertedLowEstimate": 2.51,
+        "salesHighEstimate": 142741,
+        "convertedSalesHighEstimate": 142741,
+        "salesLowEstimate": 115811,
+        "convertedSalesLowEstimate": 115811,
+        "prevRevenueIncomeCurrency": {
+          "id": 1,
+          "name": "USD"
         },
-        "threeMonthsAgo": {
-          "date": "2024-08-19T00:00:00",
-          "d": "19/8/24",
-          "p": 225.64
+        "stockEarningExpectedReleaseTimeId": {
+          "id": 4,
+          "name": "Unknown"
         },
-        "yearAgo": {
-          "date": "2023-11-17T00:00:00",
-          "d": "17/11/23",
-          "p": 188.76
+        "prevEPSEstimate": 1.777,
+        "pegRatio": 1.5938026739427005,
+        "pegRatioGroup": {
+          "id": 4,
+          "name": "SlightlyOvervalued"
+        },
+        "stockAnnualResearchYearEnding": "2026-09-30T00:00:00",
+        "stockAnnualResearchEstimatedEPS": 8.243138,
+        "stockAnnualResearchEstimatedRevenue": 451525.805847,
+        "stockListingForwardPSRatio": 8.896720703002739,
+        "stockListingForwardPERatioGroup": null,
+        "stockListingForwardPERatio": 32.980158769633604
+      },
+      "performanceData": {
+        "oneMonthGain": -0.05007,
+        "threeMonthsGain": 0.05728,
+        "sixMonthsGain": 0.2797,
+        "yearlyGain": 0.11486,
+        "yearlyGainGroup": null,
+        "ytdGain": null,
+        "threeYearsGain": 1.09235,
+        "fiveYearsGain": 1.04883
+      },
+      "technicalsData": {
+        "volumeAvg10d": 37505739,
+        "volumeAvg30d": 39848347,
+        "volumeAvg90d": 47136435,
+        "movingAvg21d": 275.393,
+        "movingAvg50d": 273.202,
+        "movingAvg200d": 231.718,
+        "emA21d": null,
+        "emA50d": null,
+        "rSquared": null,
+        "standardDeviation": null,
+        "pbRatio": 0,
+        "pcfRatio": 0,
+        "pfcfRatio": 0,
+        "priceToSalesRatio": 0,
+        "ptbRatio": 0,
+        "alpha": null
+      },
+      "tipRanksEssentialData": {
+        "priceTargetData": {
+          "priceTarget": 299.1,
+          "convertedPriceTarget": 299.1,
+          "lowestPriceTarget": 230,
+          "convertedLowestPriceTarget": 230,
+          "hightestPriceTarget": 350,
+          "convertedHighestPriceTarget": 350,
+          "upside": 0.10019863164864268,
+          "lowestUpside": -0.15397,
+          "highestUpside": 0.28742,
+          "upsideGroup": {
+            "id": 7,
+            "name": "Above10"
+          },
+          "priceTargetCurrency": {
+            "id": 1,
+            "name": "USD"
+          },
+          "listingPriceTargetCurrency": {
+            "id": 1,
+            "name": "USD"
+          }
+        },
+        "bestPriceTargetData": {
+          "priceTarget": 301.94,
+          "convertedPriceTarget": 301.94,
+          "lowestPriceTarget": 230,
+          "convertedLowestPriceTarget": 230,
+          "hightestPriceTarget": 350,
+          "convertedHighestPriceTarget": 350,
+          "upside": 0.11064518502170234,
+          "lowestUpside": -0.15397,
+          "highestUpside": 0.28742,
+          "upsideGroup": {
+            "id": 7,
+            "name": "Above10"
+          },
+          "priceTargetCurrency": {
+            "id": 1,
+            "name": "USD"
+          },
+          "listingPriceTargetCurrency": {
+            "id": 1,
+            "name": "USD"
+          }
+        },
+        "analystsConsensusData": {
+          "analystConsensus": {
+            "id": 4,
+            "name": "Buy"
+          },
+          "distribution": {
+            "buy": 19,
+            "hold": 10,
+            "sell": 2
+          }
+        },
+        "bestAnalystsConsensusData": {
+          "analystConsensus": {
+            "id": 2,
+            "name": "Sell"
+          },
+          "distribution": {
+            "buy": 16,
+            "hold": 9,
+            "sell": 1
+          }
+        },
+        "tipRanksSmartScoreData": {
+          "tipRanksSmartScore": 7,
+          "tipRanksSmartScoreGroup": {
+            "id": 3,
+            "name": "Neutral"
+          },
+          "scoreAddedDate": "2025-12-26T00:00:00",
+          "scoreAddedDateGroup": {
+            "id": 2,
+            "name": "Week"
+          }
+        },
+        "bloggersData": {
+          "bloggerConsensus": {
+            "id": 1,
+            "name": "Bullish"
+          },
+          "bearishCount": null,
+          "bullishCount": null
+        },
+        "insidersData": {
+          "rawInsiderScore": 0.2916,
+          "insiderSignal": {
+            "id": 3,
+            "name": "Sell"
+          }
+        },
+        "hedgeFundsData": {
+          "hedgeFundsScore": 0.1177,
+          "hedgeFundSignal": {
+            "id": 3,
+            "name": "Sell"
+          }
+        },
+        "newsSentimentData": {
+          "newsSentimentScore": 0.8571,
+          "newsSentiment": {
+            "id": 4,
+            "name": "Buy"
+          },
+          "newsBuzzScore": 0.47385,
+          "newsBuzzGroup": {
+            "id": 3,
+            "name": "Neutral"
+          }
+        },
+        "investorSentimentData": {
+          "investorsSentimentScore": 3,
+          "rawInvestorsSentimentScore": 0.38
+        },
+        "bestInvestorSentimentData": {
+          "investorsSentimentScore": 4,
+          "rawInvestorsSentimentScore": 0.38
+        },
+        "topEtfHolderData": {
+          "etfTicker": "GXPT",
+          "etfCompanyName": "Global X PureCap MSCI Information Technology ETF"
+        },
+        "followersData": {
+          "followersNumber": 301409,
+          "newFollowersNumber": 685
         }
       },
-      "priceTargetCurrencyId": 1,
-      "marketCountryId": 1,
-      "companyFullName": "Apple"
-    },
-    {
-        "ticker": "RANDOM"
+      "etfAssetData": null,
+      "mutualFundAssetData": null,
+      "assetsAiAnalystData": {
+        "overallScore": 78,
+        "overallRating": {
+          "id": 1,
+          "name": "Outperform"
+        },
+        "financialScore": 88,
+        "financialIncomeStatementScore": 92,
+        "financialBalanceSheetScore": 85,
+        "financialCashFlowScore": 88,
+        "earningsCallScore": 85,
+        "technicalAnalysisScore": 75,
+        "technicalAnalysisOpinion": {
+          "id": 2,
+          "name": "Positive"
+        },
+        "priceTarget": 324,
+        "recommendationDate": "2025-12-03T13:23:44.417",
+        "ratingId": 1,
+        "rating": "Outperform",
+        "actionId": 6,
+        "action": 6
+      }
     }
-  ]
+  ],
+  "count": 2
 }

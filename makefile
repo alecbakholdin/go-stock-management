@@ -31,7 +31,7 @@ build-deps:
 	go tool sqlc generate -f ./config/sqlc.yaml
 
 docker:
-	docker build -f dev.Dockerfile --name 'go-stock-management'
+	docker build -f dev.Dockerfile --tag 'go-stock-management'
 
 mysql: mysql-down
 	docker run --name go-stock-management-mysql -v ./mysql_data:/var/lib/mysql -e 'MYSQL_ROOT_PASSWORD=password' -e 'MYSQL_DATABASE=stock_ratings' -p 3306:3306 --detach 'mysql:latest' 

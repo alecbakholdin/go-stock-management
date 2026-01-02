@@ -13,7 +13,7 @@ import (
 
 func TestTipranks(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Query().Get("stickers") == "AAPL,RANDOM" {
+		if r.URL.Query().Get("stickers") == "AAPL" {
 			http.ServeFile(w, r, "./tipranks_test.json")
 		} else {
 			http.Error(w, "incorrect stickers", http.StatusBadRequest)
@@ -22,36 +22,37 @@ func TestTipranks(t *testing.T) {
 	tipranksTable := &testTipranksTable{}
 	tipranks := New(tipranksTable, server.URL+"?stickers=")
 	rows, err := tipranks.Fetch()
-	if !assert.NoError(t, err) || !assert.Equal(t, 2, len(rows)) {
-		t.FailNow()
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(rows))
+
+	expectedAppl := tipranksJsonRow{
+		TradingInformationData: tipRanksTradingInformationData{"AAPL"},
+		TipRanksEssentialData: tipRanksEssentialData{
+			NewsSentiment:            tipRanksNewsSentimentData{NewsSentiment: tipRanksNewsSentimentId{4}},
+			AnalystConsensusData:     tipranksAnalystConsensusData{AnalystConsensus: tipRanksNameContainer{"Buy"}},
+			BestAnalystConsensusData: tipranksAnalystConsensusData{AnalystConsensus: tipRanksNameContainer{"Sell"}},
+			PriceTargetData:          tipRanksPriceTargetData{PriceTarget: 299.1},
+			BestPriceTargetData:      tipRanksPriceTargetData{PriceTarget: 301.94},
+		},
 	}
-
-	expectedAppl := tipranksJsonRow{"AAPL", 5, tipranksAnalystConsensus{"buy"}, tipranksAnalystConsensus{"sell"}, 245.35, 246.22}
-	expectedRandom := tipranksJsonRow{Symbol: "RANDOM"}
 	assert.Equal(t, expectedAppl, rows[0])
-	assert.Equal(t, expectedRandom, rows[1])
-
 
 	n, err := tipranks.Save(rows)
-	assert.Equal(t, 2, n)
-	if !assert.NoError(t, err) || !assert.Equal(t, 2, len(tipranksTable.written)) {
-		t.FailNow()
-	}
+	assert.Equal(t, 1, n)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(tipranksTable.written))
+
 	expectedApplSql := models.SaveTipranksRowParams{
 		Symbol:                 "AAPL",
-		NewsSentiment:          sql.NullInt32{Int32: 5, Valid: true},
+		NewsSentiment:          sql.NullInt32{Int32: 4, Valid: true},
 		AnalystConsensus:       sql.NullString{String: "buy", Valid: true},
-		AnalystPriceTarget:     sql.NullFloat64{Float64: 245.35, Valid: true},
+		AnalystPriceTarget:     sql.NullFloat64{Float64: 299.1, Valid: true},
 		BestAnalystConsensus:   sql.NullString{String: "sell", Valid: true},
-		BestAnalystPriceTarget: sql.NullFloat64{Float64: 246.22, Valid: true},
+		BestAnalystPriceTarget: sql.NullFloat64{Float64: 301.94, Valid: true},
 	}
-	expectedRandomSql := models.SaveTipranksRowParams{Symbol: "RANDOM", NewsSentiment: sql.NullInt32{Int32: 0, Valid: true}}
 	assert.NotZero(t, tipranksTable.written[0].Created)
-	assert.Equal(t, tipranksTable.written[0].Created, tipranksTable.written[1].Created)
 	expectedApplSql.Created = tipranksTable.written[0].Created
-	expectedRandomSql.Created = tipranksTable.written[1].Created
 	assert.Equal(t, expectedApplSql, tipranksTable.written[0])
-	assert.Equal(t, expectedRandomSql, tipranksTable.written[1])
 }
 
 type testTipranksTable struct {
@@ -59,7 +60,7 @@ type testTipranksTable struct {
 }
 
 func (t *testTipranksTable) ListCompanies(_ context.Context) ([]string, error) {
-	return []string{"AAPL", "RANDOM"}, nil
+	return []string{"AAPL"}, nil
 }
 
 func (t *testTipranksTable) SaveTipranksRow(_ context.Context, row models.SaveTipranksRowParams) error {
